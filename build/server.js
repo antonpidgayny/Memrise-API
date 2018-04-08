@@ -8,6 +8,7 @@ var helmet = require("helmet");
 var mongoose = require("mongoose");
 var logger = require("morgan");
 var ApiUserRouter_1 = require("./router/ApiUserRouter");
+var TestRouter_1 = require("./router/TestRouter");
 require('dotenv').config();
 var Server = /** @class */ (function () {
     function Server() {
@@ -37,6 +38,7 @@ var Server = /** @class */ (function () {
         var router = express.Router();
         this.app.use('/', router);
         this.app.use('/api/v1/apiuser', ApiUserRouter_1.default);
+        this.app.use('/api/v1/test', TestRouter_1.default);
         //this.app.use('/api/v1/users', UserRouter);
     };
     return Server;

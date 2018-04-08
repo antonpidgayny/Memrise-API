@@ -8,6 +8,7 @@ import * as logger from 'morgan';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 import ApiUserRouter from './router/ApiUserRouter';
+import TestRouter from './router/TestRouter';
 
 class Server {
 
@@ -47,6 +48,7 @@ class Server {
 
     this.app.use('/', router);
     this.app.use('/api/v1/apiuser', ApiUserRouter);
+    this.app.use('/api/v1/test', TestRouter);
     //this.app.use('/api/v1/users', UserRouter);
   }
 }
