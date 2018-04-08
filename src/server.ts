@@ -9,7 +9,9 @@ import * as path from 'path';
 import * as dotenv from 'dotenv';
 import ApiUserRouter from './router/ApiUserRouter';
 import TestRouter from './router/TestRouter';
-
+dotenv.config();
+/*require("isomorphic-fetch");
+require('dotenv').config();*/
 class Server {
 
   public app: express.Application;

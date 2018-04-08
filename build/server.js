@@ -7,9 +7,12 @@ var express = require("express");
 var helmet = require("helmet");
 var mongoose = require("mongoose");
 var logger = require("morgan");
+var dotenv = require("dotenv");
 var ApiUserRouter_1 = require("./router/ApiUserRouter");
 var TestRouter_1 = require("./router/TestRouter");
-require('dotenv').config();
+dotenv.config();
+/*require("isomorphic-fetch");
+require('dotenv').config();*/
 var Server = /** @class */ (function () {
     function Server() {
         this.app = express();

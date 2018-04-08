@@ -14,8 +14,8 @@ var ApiUserAuthControllerMiddleware = /** @class */ (function () {
                 });
             }
             else {
-                res.send(JSON.stringify({ status: "OK" }));
-                //next();
+                //res.send(JSON.stringify({status : "OK"}));
+                next();
             }
         });
     };
@@ -28,8 +28,8 @@ var ApiUserAuthControllerMiddleware = /** @class */ (function () {
                 });
             }
             else {
-                res.send(JSON.stringify({ status: "OK" }));
-                //next();
+                //res.send(JSON.stringify({status : "OK"}));
+                next();
             }
         });
     };
