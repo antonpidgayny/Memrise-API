@@ -14,7 +14,7 @@ dotenv.config();
 require('dotenv').config();*/
 class Server {
 
-  public app: express.Application;
+  private app: express.Application;
 
   constructor() {
     this.app = express();
@@ -47,13 +47,16 @@ class Server {
   // application routes
   public routes(): void {
     const router: express.Router = express.Router();
-
     this.app.use('/', router);
     this.app.use('/api/v1/apiuser', ApiUserRouter);
     this.app.use('/api/v1/test', TestRouter);
     //this.app.use('/api/v1/users', UserRouter);
   }
+
+  public getApp(): any{
+  	return this.app
+  }
 }
 
 // export
-export default new Server().app;
+export default new Server().getApp();

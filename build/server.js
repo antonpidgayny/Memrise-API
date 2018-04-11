@@ -44,8 +44,11 @@ var Server = /** @class */ (function () {
         this.app.use('/api/v1/test', TestRouter_1.default);
         //this.app.use('/api/v1/users', UserRouter);
     };
+    Server.prototype.getApp = function () {
+        return this.app;
+    };
     return Server;
 }());
 // export
-exports.default = new Server().app;
+exports.default = new Server().getApp();
 //# sourceMappingURL=server.js.map
