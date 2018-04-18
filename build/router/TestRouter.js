@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var ApiUserAuthControllerMiddleware_1 = require("../middlewears/ApiUserAuthControllerMiddleware");
 var Slave_1 = require("../handlers/Slave");
+var Course_1 = require("../handlers/Course");
 var request = require("request");
 var TestRouter = /** @class */ (function () {
     function TestRouter() {
@@ -35,10 +36,10 @@ var TestRouter = /** @class */ (function () {
                 'Referer': 'https://www.memrise.com/login/',
                 'Upgrade-Insecure-Requests': 1,
             };
-            console.log(headers);
+            //console.log(headers);
             var j = request.jar();
             var cookie_str = 'csrftoken=' + csrfmiddlewaretoken;
-            console.log(cookie_str);
+            //console.log(cookie_str);
             var cookie = request.cookie(cookie_str);
             var url = 'https://www.memrise.com';
             j.setCookie(cookie, url);
@@ -49,15 +50,26 @@ var TestRouter = /** @class */ (function () {
           res.send(html);
         });*/
     };
+    TestRouter.prototype.getCourseInfo = function (req, res) {
+        console.log(req.query.url);
+        Course_1.default.setURL(req.query.url);
+        Course_1.default.getCourse(function (err, info) {
+            res.send(JSON.stringify({ 'info': info }));
+        });
+    };
     TestRouter.prototype.routes = function () {
+        this.router.get('/getcourseinfo', ApiUserAuthControllerMiddleware_1.default.jwtApiKeyGetSecurity, this.getCourseInfo);
         this.router.post('/', ApiUserAuthControllerMiddleware_1.default.jwtApiKeyPostSecurity, this.goToMemriseHomePage);
         this.router.get('/', ApiUserAuthControllerMiddleware_1.default.jwtApiKeyGetSecurity, this.goToMemriseHomePage);
+    };
+    TestRouter.prototype.getRouter = function () {
+        return this.router;
     };
     return TestRouter;
 }());
 //export
 var testRoutes = new TestRouter();
 testRoutes.routes();
-var testRoutesexp = testRoutes.router;
+var testRoutesexp = testRoutes.getRouter();
 exports.default = testRoutesexp;
 //# sourceMappingURL=TestRouter.js.map

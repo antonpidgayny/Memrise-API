@@ -19,6 +19,7 @@
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
     "crypto-js": "^3.1.9-1",
+    "dom-parser": "^0.1.5",
     "dotenv": "^5.0.1",
     "es6-promise": "^4.2.4",
     "express": "^4.16.3",

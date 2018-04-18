@@ -1,9 +1,10 @@
 import { Router, Response, Request, NextFunction } from 'express';
 import ApiUserAuthControllerMiddleware from '../middlewears/ApiUserAuthControllerMiddleware';
 import Slave from '../handlers/Slave';
+import Course from '../handlers/Course';
 import * as request from 'request';
 class TestRouter{
-	public router: Router;
+	private router: Router;
 
 	constructor(){
 		this.router = Router();
@@ -38,10 +39,10 @@ class TestRouter{
 			//'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
 		    //'User-Agent': 'request'
 		  }
-		  console.log(headers);
+		  //console.log(headers);
 		  var j = request.jar();
 		  let cookie_str = 'csrftoken='+csrfmiddlewaretoken;
-		  console.log(cookie_str);
+		  //console.log(cookie_str);
 		  var cookie = request.cookie(cookie_str);
 		  var url = 'https://www.memrise.com' ;
 	      j.setCookie(cookie, url);
@@ -52,15 +53,27 @@ class TestRouter{
           res.send(html);
         });*/
 	}
+	public getCourseInfo(req : Request, res : Response) : void{
+		console.log(req.query.url);
+		Course.setURL(req.query.url);
+		Course.getCourse(function(err, info){
+			res.send(JSON.stringify({'info' : info }));
+		});
+	}
 
 	public routes(){
+		this.router.get('/getcourseinfo', ApiUserAuthControllerMiddleware.jwtApiKeyGetSecurity, this.getCourseInfo);
 		this.router.post('/', ApiUserAuthControllerMiddleware.jwtApiKeyPostSecurity, this.goToMemriseHomePage);
 		this.router.get('/', ApiUserAuthControllerMiddleware.jwtApiKeyGetSecurity, this.goToMemriseHomePage);
+	}
+
+	public getRouter(){
+		return this.router
 	}
 }
 
 //export
 const testRoutes = new TestRouter();
 testRoutes.routes();
-const testRoutesexp = testRoutes.router;
+const testRoutesexp = testRoutes.getRouter();
 export default testRoutesexp;

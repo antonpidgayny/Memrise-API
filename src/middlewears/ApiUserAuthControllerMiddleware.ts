@@ -7,7 +7,6 @@ class ApiUserAuthControllerMiddleware{
 	}
 
 	public jwtApiKeyGetSecurity(req : Request, res : Response, next : NextFunction) : void {
-		console.log(req.params.key);
 	    jwt.verify(req.query.key, process.env.jwt_api_key_hash, function(err, decoded) {
 		  if (err) {
 		  	res.status(200).json({
