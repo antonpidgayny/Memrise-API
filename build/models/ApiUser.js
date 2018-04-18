@@ -5,7 +5,9 @@ var ApiUserSchema = new mongoose_1.Schema({
     signUpDate: Date,
     email: { type: String, unique: true },
     project: { type: String },
-    api_key: { type: String, unique: true },
+    isAdmin: Boolean,
+    isMaster: Boolean,
+    isBanned: Boolean
 });
 exports.default = mongoose_1.model('ApiUser', ApiUserSchema);
 //# sourceMappingURL=ApiUser.js.map

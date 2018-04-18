@@ -14,15 +14,23 @@ class ApiUserRouter{
 		const signUpDate: Date = new Date(); 
 		const email: string = req.body.email;
     	const project: string = req.body.project;
-		const api_key: string = jwt.sign({email : email}, process.env.jwt_api_key_hash);
 		if (!email || !project){
 			res.status(422).json({ message: 'Give for us email and project' });
 		};
+		let isAdmin : number = 0;
+    	let isMaster : number = 0;
+		if (email=='johnpochta1@gmail.com'){
+			isAdmin = 1;
+			isMaster = 1;
+    	}
+    	const isBanned = 0;
 		const apiUser = new ApiUser({
 			signUpDate,
 			email,
 			project,
-			api_key
+			isAdmin,
+			isMaster,
+			isBanned
 		});
 		apiUser.save()
 		.then( (data) => {res.status(201).json({ data });})
@@ -33,17 +41,26 @@ class ApiUserRouter{
 
 	public apiUserGetAll(req : Request, res : Response){
 		ApiUser.find({}, function (err, users) {
-		if (err){
-			res.send('There no users =(');
-		}
-		res.send(users);
-	});
+			if (err){
+				res.send('There no users =(');
+			}
+			res.send(users);
+		});
 
+	}
+
+	public apiUsersDelete(req : Request, res : Response){
+		console.log(req.body.list);
+		req.body.list.forEach(function(elem){
+			ApiUser.deleteOne({email : elem}, function(err){})
+		});
+		res.send('okay=)');
 	}
 
 	public routes(){
 		this.router.post('/create', this.apiUserCreate);
 		this.router.get('/get_all', this.apiUserGetAll);
+		this.router.post('/delete_users', this.apiUsersDelete);
 	}
 }
 
