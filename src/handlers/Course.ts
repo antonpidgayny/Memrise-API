@@ -5,18 +5,25 @@ var DomParser = require('dom-parser');
 
 class Course {
 	
-	private Url: string	
+	private name: string;
 
-	constructor() {
-	
+	private id: string;	
+
+	constructor(Name: string, Id: string) {
+		this.name=Name;
+		this.id=Id;
 	}
 
-	public setURL(url: string): void {this.Url=url}
+	public setName(Name: string): void {this.name=Name}
 
-	public getURL(): string {return this.Url}
+	public getName(): string {return this.name}
+
+	public setID(Id: string): void {this.id=Id}
+
+	public getID(): string {return this.id}
 	
-	public getLessonByID(id: number , callback): void{
-		let url = this.Url + id + '/';
+	public getLessonByID(ID: number , callback): void{
+		let url = "https://www.memrise.com/course/" + this.id +'/'+ this.name +'/'+ ID +'/';
 		Slave.webPageToStr(url, (err, html) => {	
 			let parser = new DomParser();	
 			let dom = parser.parseFromString(html);
@@ -35,7 +42,7 @@ class Course {
 
 	public getCourse(callback): void{
 		let parser = new DomParser();	
-		Slave.webPageToStr(this.Url, (err, html) => {
+		Slave.webPageToStr("https://www.memrise.com/course/" + this.id +'/'+ this.name +'/', (err, html) => {
 			let dom = parser.parseFromString(html);	
 			let lessons = dom.getElementsByClassName('level-index');
 			let num_lessons = lessons.length;
@@ -57,7 +64,7 @@ class Course {
 	};
 }
 
-export default new Course();
+export default new Course("","");
 
 
  
