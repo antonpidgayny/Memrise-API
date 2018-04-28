@@ -7,11 +7,12 @@ import * as mongoose from 'mongoose';
 import * as logger from 'morgan';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
-import ApiUserRouter from './router/ApiUserRouter';
+//import ApiUserRouter from './router/ApiUserRouter';
+import ApiUserRouter from './router/UserRoutes/ApiUserRouter';
+import ApiAdminUserRouter from './router/UserRoutes/ApiAdminUserRouter';
+import ApiMasterUserRouter from './router/UserRoutes/ApiMasterUserRouter';
 import TestRouter from './router/TestRouter';
 dotenv.config();
-/*require("isomorphic-fetch");
-require('dotenv').config();*/
 class Server {
 
   private app: express.Application;
@@ -48,6 +49,8 @@ class Server {
   public routes(): void {
     const router: express.Router = express.Router();
     this.app.use('/', router);
+    this.app.use('/api/v1/admin', ApiAdminUserRouter);
+    this.app.use('/api/v1/master', ApiMasterUserRouter);
     this.app.use('/api/v1/apiuser', ApiUserRouter);
     this.app.use('/api/v1/test', TestRouter);
     //this.app.use('/api/v1/users', UserRouter);

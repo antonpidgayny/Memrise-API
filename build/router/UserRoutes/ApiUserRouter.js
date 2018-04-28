@@ -1,12 +1,22 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var ApiUser_1 = require("../models/ApiUser");
+var ApiUser_1 = require("../../models/ApiUser");
+var UserRouter_1 = require("./AbstractUserRouteClasses/UserRouter");
 var jwt = require("jsonwebtoken");
-var ApiUserRouter = /** @class */ (function () {
+var ApiUserRouter = /** @class */ (function (_super) {
+    __extends(ApiUserRouter, _super);
     function ApiUserRouter() {
-        this.router = express_1.Router();
-        this.routes();
+        return _super.call(this) || this;
     }
     ApiUserRouter.prototype.apiUserCreate = function (req, res) {
         var signUpDate = new Date();
@@ -25,33 +35,17 @@ var ApiUserRouter = /** @class */ (function () {
         apiUser.save()
             .then(function (data) {
             //data['token'] = api_key;
-            res.status(201).json({ email: data.email, api_key: api_key });
+            res.status(201).json({ api_key: api_key });
         })
             .catch(function (error) {
             res.status(500).json({ error: error });
         });
     };
-    ApiUserRouter.prototype.apiUserGetAll = function (req, res) {
-        ApiUser_1.default.find({}, function (err, users) {
-            if (err) {
-                res.send('There no users =(');
-            }
-            res.send(users);
-        });
-    };
-    ApiUserRouter.prototype.apiUsersDelete = function (req, res) {
-        req.body.list.forEach(function (elem) {
-            ApiUser_1.default.deleteOne({ email: elem }, function (err) { });
-        });
-        res.send('okay=)');
-    };
     ApiUserRouter.prototype.routes = function () {
         this.router.post('/create', this.apiUserCreate);
-        this.router.get('/get_all', this.apiUserGetAll);
-        this.router.post('/delete_users', this.apiUsersDelete);
     };
     return ApiUserRouter;
-}());
+}(UserRouter_1.default));
 //export
 var apiUserRoutes = new ApiUserRouter();
 apiUserRoutes.routes();

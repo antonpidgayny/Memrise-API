@@ -4,6 +4,7 @@ var express_1 = require("express");
 var ApiUserAuthControllerMiddleware_1 = require("../middlewears/ApiUserAuthControllerMiddleware");
 var Slave_1 = require("../handlers/Slave");
 var Course_1 = require("../handlers/Course");
+var User_1 = require("../handlers/User");
 var request = require("request");
 var TestRouter = /** @class */ (function () {
     function TestRouter() {
@@ -43,21 +44,35 @@ var TestRouter = /** @class */ (function () {
             var cookie = request.cookie(cookie_str);
             var url = 'https://www.memrise.com';
             j.setCookie(cookie, url);
-            request.post({ url: 'https://www.memrise.com/login/', jar: j, headers: headers, form: form }, function (err, httpResponse, body) { res.send(JSON.stringify({ 'cookies': httpResponse.headers['set-cookie'] })); });
-            //res.send(html);
+            request.post({ url: 'https://www.memrise.com/login/', jar: j, headers: headers, form: form }, function (err, httpResponse, body) {
+                res.send(JSON.stringify({ 'cookies': httpResponse.headers['set-cookie'] }));
+            });
         });
-        /*Slave.webPageToStr("https://www.memrise.com/course/1123139/turkish-1/", function(err, html) {
-          res.send(html);
-        });*/
     };
     TestRouter.prototype.getCourseInfo = function (req, res) {
         console.log(req.query.url);
-        Course_1.default.setURL(req.query.url);
+        var id;
+        var name;
+        Course_1.default.setID(id);
+        Course_1.default.setName(name);
         Course_1.default.getCourse(function (err, info) {
             res.send(JSON.stringify({ 'info': info }));
         });
     };
+    TestRouter.prototype.getUserInfo = function (req, res) {
+        console.log(req.query.username);
+        if (req.query.username) {
+            User_1.default.setUserName(req.query.username);
+            User_1.default.getInfo(function (result) {
+                res.send(JSON.stringify({ result: result }));
+            });
+        }
+        else {
+            res.send("username argument can't be empty");
+        }
+    };
     TestRouter.prototype.routes = function () {
+        this.router.get('/getuserinfo', this.getUserInfo);
         this.router.get('/getcourseinfo', ApiUserAuthControllerMiddleware_1.default.jwtApiKeyGetSecurity, this.getCourseInfo);
         this.router.post('/', ApiUserAuthControllerMiddleware_1.default.jwtApiKeyPostSecurity, this.goToMemriseHomePage);
         this.router.get('/', ApiUserAuthControllerMiddleware_1.default.jwtApiKeyGetSecurity, this.goToMemriseHomePage);

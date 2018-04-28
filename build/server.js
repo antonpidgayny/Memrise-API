@@ -8,11 +8,12 @@ var helmet = require("helmet");
 var mongoose = require("mongoose");
 var logger = require("morgan");
 var dotenv = require("dotenv");
-var ApiUserRouter_1 = require("./router/ApiUserRouter");
+//import ApiUserRouter from './router/ApiUserRouter';
+var ApiUserRouter_1 = require("./router/UserRoutes/ApiUserRouter");
+var ApiAdminUserRouter_1 = require("./router/UserRoutes/ApiAdminUserRouter");
+var ApiMasterUserRouter_1 = require("./router/UserRoutes/ApiMasterUserRouter");
 var TestRouter_1 = require("./router/TestRouter");
 dotenv.config();
-/*require("isomorphic-fetch");
-require('dotenv').config();*/
 var Server = /** @class */ (function () {
     function Server() {
         this.app = express();
@@ -40,6 +41,8 @@ var Server = /** @class */ (function () {
     Server.prototype.routes = function () {
         var router = express.Router();
         this.app.use('/', router);
+        this.app.use('/api/v1/admin', ApiAdminUserRouter_1.default);
+        this.app.use('/api/v1/master', ApiMasterUserRouter_1.default);
         this.app.use('/api/v1/apiuser', ApiUserRouter_1.default);
         this.app.use('/api/v1/test', TestRouter_1.default);
         //this.app.use('/api/v1/users', UserRouter);

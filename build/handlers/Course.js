@@ -3,12 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Slave_1 = require("./Slave");
 var DomParser = require('dom-parser');
 var Course = /** @class */ (function () {
-    function Course() {
+    function Course(Name, Id) {
+        this.name = Name;
+        this.id = Id;
     }
-    Course.prototype.setURL = function (url) { this.Url = url; };
-    Course.prototype.getURL = function () { return this.Url; };
-    Course.prototype.getLessonByID = function (id, callback) {
-        var url = this.Url + id + '/';
+    Course.prototype.setName = function (Name) { this.name = Name; };
+    Course.prototype.getName = function () { return this.name; };
+    Course.prototype.setID = function (Id) { this.id = Id; };
+    Course.prototype.getID = function () { return this.id; };
+    Course.prototype.getLessonByID = function (ID, callback) {
+        var url = "https://www.memrise.com/course/" + this.id + '/' + this.name + '/' + ID + '/';
         Slave_1.default.webPageToStr(url, function (err, html) {
             var parser = new DomParser();
             var dom = parser.parseFromString(html);
@@ -26,7 +30,7 @@ var Course = /** @class */ (function () {
     Course.prototype.getCourse = function (callback) {
         var _this = this;
         var parser = new DomParser();
-        Slave_1.default.webPageToStr(this.Url, function (err, html) {
+        Slave_1.default.webPageToStr("https://www.memrise.com/course/" + this.id + '/' + this.name + '/', function (err, html) {
             var dom = parser.parseFromString(html);
             var lessons = dom.getElementsByClassName('level-index');
             var num_lessons = lessons.length;
@@ -56,5 +60,5 @@ var Course = /** @class */ (function () {
     ;
     return Course;
 }());
-exports.default = new Course();
+exports.default = new Course("", "");
 //# sourceMappingURL=Course.js.map

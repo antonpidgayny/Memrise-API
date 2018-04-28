@@ -2,7 +2,9 @@ import { Router, Response, Request, NextFunction } from 'express';
 import ApiUserAuthControllerMiddleware from '../middlewears/ApiUserAuthControllerMiddleware';
 import Slave from '../handlers/Slave';
 import Course from '../handlers/Course';
+import User  from '../handlers/User';
 import * as request from 'request';
+
 class TestRouter{
 	private router: Router;
 
@@ -46,22 +48,36 @@ class TestRouter{
 		  var cookie = request.cookie(cookie_str);
 		  var url = 'https://www.memrise.com' ;
 	      j.setCookie(cookie, url);
-          request.post({url:'https://www.memrise.com/login/', jar : j, headers : headers, form: form}, function(err,httpResponse,body){res.send(JSON.stringify({'cookies' : httpResponse.headers['set-cookie']}))});
-          //res.send(html);
+          request.post({url:'https://www.memrise.com/login/', jar : j, headers : headers, form: form}, function(err,httpResponse,body){
+          	res.send(JSON.stringify({'cookies' : httpResponse.headers['set-cookie']}));
+          });
         });
-        /*Slave.webPageToStr("https://www.memrise.com/course/1123139/turkish-1/", function(err, html) {
-          res.send(html);
-        });*/
 	}
 	public getCourseInfo(req : Request, res : Response) : void{
 		console.log(req.query.url);
-		Course.setURL(req.query.url);
+		let id;
+		let name;
+		Course.setID(id);
+		Course.setName(name);
 		Course.getCourse(function(err, info){
 			res.send(JSON.stringify({'info' : info }));
 		});
 	}
 
+	public getUserInfo(req : Request, res : Response) : void{
+		console.log(req.query.username);
+		if (req.query.username){
+			User.setUserName(req.query.username);
+			User.getInfo(function(result){
+				res.send(JSON.stringify({result : result}));
+			});
+		}else{
+			res.send("username argument can't be empty");
+		}
+	}
+
 	public routes(){
+		this.router.get('/getuserinfo', this.getUserInfo);
 		this.router.get('/getcourseinfo', ApiUserAuthControllerMiddleware.jwtApiKeyGetSecurity, this.getCourseInfo);
 		this.router.post('/', ApiUserAuthControllerMiddleware.jwtApiKeyPostSecurity, this.goToMemriseHomePage);
 		this.router.get('/', ApiUserAuthControllerMiddleware.jwtApiKeyGetSecurity, this.goToMemriseHomePage);

@@ -47,13 +47,13 @@ class User{
 		this.getContent(3,callback);
 	}
 
-	public getCourses(learning_or_teaching: string , callback){
+	private getCourses(learning_or_teaching: string , callback){
 		let url: string = "https://www.memrise.com/user/"+this.user_name+"/courses/"+learning_or_teaching+"/";
 		Slave.webPageToStr(url,(err,html)=>{
 			let parser = new DomParser();	
 			let dom = parser.parseFromString(html);
 			let courses = [];
-			let things = dom.getElementsByClassName("picture-wrapper").forEach((item,i,arr)=>{
+			dom.getElementsByClassName("picture-wrapper").forEach((item,i,arr)=>{
 				courses.push({
 					name: item.attributes[0].value.split('/')[3],
 					id: item.attributes[0].value.split('/')[2]
