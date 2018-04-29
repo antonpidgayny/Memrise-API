@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = require("mongoose");
 var ApiAdminListSchema = new mongoose_1.Schema({
     dateOfAppointment: Date,
-    email: { type: String, unique: true },
+    email_fk: String,
     position: String,
     master: String,
     active: Boolean,

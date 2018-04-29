@@ -9,10 +9,10 @@ var User = /** @class */ (function () {
     User.prototype.getContent = function (k, callback) {
         var url = "https://www.memrise.com/user/" + this.user_name + "/";
         if (k === 0) {
-            url += "mempals/followers/";
+            url += "mempals/following/";
         }
         else if (k === 1) {
-            url += "mempals/following/";
+            url += "mempals/followers/";
         }
         Slave_1.default.webPageToStr(url, function (err, html) {
             var parser = new DomParser();
@@ -47,7 +47,7 @@ var User = /** @class */ (function () {
             var parser = new DomParser();
             var dom = parser.parseFromString(html);
             var courses = [];
-            var things = dom.getElementsByClassName("picture-wrapper").forEach(function (item, i, arr) {
+            dom.getElementsByClassName("picture-wrapper").forEach(function (item, i, arr) {
                 courses.push({
                     name: item.attributes[0].value.split('/')[3],
                     id: item.attributes[0].value.split('/')[2]

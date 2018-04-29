@@ -5,6 +5,22 @@ class Slave{
 	constructor(){
 	}
 
+  public async mongoosePromisify(table, method, parameters){
+      try{
+        return await table[method](parameters);
+      }catch(e){
+        return e;
+      }
+   };
+
+  public async mongooseActionsPromisify(table, method, condition, action, additional){
+    try{
+      return await table[method](condition,action,additional);
+    }catch(e){
+      return e;
+    }
+
+  }
 
 	public webPageToStr(url,callback) : void {
 		    http.get(url, function(res) {

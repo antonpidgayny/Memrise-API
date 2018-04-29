@@ -63,12 +63,11 @@ class TestRouter{
 			res.send(JSON.stringify({'info' : info }));
 		});
 	}
-
 	public getUserInfo(req : Request, res : Response) : void{
 		console.log(req.query.username);
 		if (req.query.username){
 			User.setUserName(req.query.username);
-			User.getInfo(function(result){
+			User.getInfo(function(err, result){
 				res.send(JSON.stringify({result : result}));
 			});
 		}else{

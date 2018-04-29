@@ -11,13 +11,106 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var ApiUser_1 = require("../../models/ApiUser");
+var ApiBannedUsers_1 = require("../../models/ApiBannedUsers");
 var PrivilegeUserRouter_1 = require("./AbstractUserRouteClasses/PrivilegeUserRouter");
+var Slave_1 = require("../../handlers/Slave");
 var jwt = require("jsonwebtoken");
 var ApiAdminUserRouter = /** @class */ (function (_super) {
     __extends(ApiAdminUserRouter, _super);
     function ApiAdminUserRouter() {
         return _super.call(this) || this;
     }
+    ApiAdminUserRouter.prototype.unbanApiUser = function (req, res) {
+        Slave_1.default.mongoosePromisify(ApiBannedUsers_1.default, 'find', { email_fk: req.body.username })
+            .catch(function (e) { return res.send(e); })
+            .then(function (result) {
+            if (!result.length) {
+                res.send("User not in Ban List");
+            }
+            else {
+                try {
+                    result.forEach(function (elem) {
+                        if (elem.active === true) {
+                            Slave_1.default.mongooseActionsPromisify(ApiBannedUsers_1.default, 'findOneAndUpdate', { _id: elem._id }, { "$set": { "active": false } }, { new: true })
+                                .then(function (result) {
+                                res.send(req.body.username + " was unbanned");
+                            })
+                                .catch(function (e) { return res.send(e); });
+                            throw {};
+                        }
+                    });
+                    res.send(req.body.username + " don't have active bans");
+                }
+                catch (e) {
+                    res.send(req.body.username + " was successful unbanned");
+                }
+            }
+        });
+    };
+    ApiAdminUserRouter.prototype.getApiUsersBanList = function (req, res) {
+        Slave_1.default.mongoosePromisify(ApiBannedUsers_1.default, 'find', {})
+            .catch(function (e) { return res.send(e); })
+            .then(function (result) { return res.send(result); });
+    };
+    ApiAdminUserRouter.prototype.banApiUser = function (req, res) {
+        //somebody, add the condition on empty email)))0, it's not interesting for me(...
+        function Ban(banDate, email_fk, banReason, unbanReason, admin, active, unbanDate) {
+            var bannedUser = new ApiBannedUsers_1.default({
+                banDate: banDate,
+                email_fk: email_fk,
+                banReason: banReason,
+                unbanReason: unbanReason,
+                admin: admin,
+                active: active,
+                unbanDate: unbanDate
+            });
+            return bannedUser.save();
+        }
+        Slave_1.default.mongoosePromisify(ApiUser_1.default, 'findOne', { email: req.body.username })
+            .catch(function (e) { return res.send(e); })
+            .then(function (result) {
+            if (result === null) {
+                res.send("User is undefined=)");
+            }
+            else {
+                Slave_1.default.mongoosePromisify(ApiBannedUsers_1.default, 'find', { email_fk: req.body.username })
+                    .catch(function (e) { return res.send(e); })
+                    .then(function (result) {
+                    var banDate = new Date();
+                    var username = req.body.username;
+                    var description = req.body.description;
+                    var unbanDescr = '';
+                    var admin = 'Test';
+                    var active = true;
+                    var unbanDate = new Date();
+                    if (!result.length) {
+                        Ban(banDate, username, description, unbanDescr, admin, active, unbanDate)
+                            .then(function (data) { return res.send(data); })
+                            .catch(function (e) { return res.send(e); });
+                    }
+                    else {
+                        var BreakException = {};
+                        try {
+                            result.forEach(function (elem) {
+                                if (elem.active === true) {
+                                    throw BreakException;
+                                }
+                                if (result.indexOf(elem) === (result.length - 1)) {
+                                    console.log('ya tut');
+                                    Ban(banDate, username, description, unbanDescr, admin, active, unbanDate)
+                                        .then(function (data) { return res.send(data); })
+                                        .catch(function (e) { return res.send(e); });
+                                }
+                            });
+                        }
+                        catch (e) {
+                            res.send('User is already banned');
+                        }
+                    }
+                });
+            }
+        });
+    };
     ApiAdminUserRouter.prototype.apiUserCreate = function (req, res) {
         var signUpDate = new Date();
         var email = req.body.email;
@@ -41,7 +134,7 @@ var ApiAdminUserRouter = /** @class */ (function (_super) {
             res.status(500).json({ error: error });
         });
     };
-    ApiAdminUserRouter.prototype.apiUserGetAll = function (req, res) {
+    ApiAdminUserRouter.prototype.getApiUsersAll = function (req, res) {
         ApiUser_1.default.find({}, function (err, users) {
             if (err) {
                 res.send('There no users =(');
@@ -49,7 +142,7 @@ var ApiAdminUserRouter = /** @class */ (function (_super) {
             res.send(users);
         });
     };
-    ApiAdminUserRouter.prototype.apiUsersDelete = function (req, res) {
+    ApiAdminUserRouter.prototype.deleteApiUsers = function (req, res) {
         req.body.list.forEach(function (elem) {
             ApiUser_1.default.deleteOne({ email: elem }, function (err) { });
         });
@@ -57,8 +150,11 @@ var ApiAdminUserRouter = /** @class */ (function (_super) {
     };
     ApiAdminUserRouter.prototype.routes = function () {
         this.router.post('/create', this.apiUserCreate);
-        this.router.get('/get_all', this.apiUserGetAll);
-        this.router.post('/delete_users', this.apiUsersDelete);
+        this.router.get('/get_all', this.getApiUsersAll);
+        this.router.post('/delete_users', this.deleteApiUsers);
+        this.router.post('/ban_users', this.banApiUser);
+        this.router.get('/see_banlist', this.getApiUsersBanList);
+        this.router.post('/unban_user', this.unbanApiUser);
     };
     return ApiAdminUserRouter;
 }(PrivilegeUserRouter_1.default));

@@ -8,6 +8,26 @@ class ApiMasterUserRouter extends MasterUserRouter{
 	constructor(){
 		super();
 	}
+	makeAdmin(req : Request, res : Response):void{
+		
+	}
+	revokeAdmin(req : Request, res : Response):void{
+		
+	}
+	getApiAdminsAll(req : Request, res : Response):void{
+		
+	}
+	unbanApiUser(req : Request, res : Response):void{
+		
+	}
+	getApiUsersBanList(req : Request, res : Response): void{
+
+	}
+	banApiUser(req : Request, res : Response): void{
+		req.body.list.forEach(function(elem){
+
+		});
+	}
 	apiUserCreate(req : Request, res : Response) : void {
 		const signUpDate: Date = new Date(); 
 		const email: string = req.body.email;
@@ -30,7 +50,7 @@ class ApiMasterUserRouter extends MasterUserRouter{
       		res.status(500).json({ error });
     	});
 	}
-	apiUserGetAll(req : Request, res : Response) : void{
+	getApiUsersAll(req : Request, res : Response) : void{
 		ApiUser.find({}, function (err, users) {
 			if (err){
 				res.send('There no users =(');
@@ -39,7 +59,7 @@ class ApiMasterUserRouter extends MasterUserRouter{
 		});
 
 	}
-	apiUsersDelete(req : Request, res : Response) : void{
+	deleteApiUsers(req : Request, res : Response) : void{
 		req.body.list.forEach(function(elem){
 			ApiUser.deleteOne({email : elem}, function(err){})
 		});
@@ -54,8 +74,8 @@ class ApiMasterUserRouter extends MasterUserRouter{
 	routes(){
 		this.router.post('/create', this.apiUserCreate);
 		this.router.get('/yell', this.masterYell);
-		this.router.get('/get_all', this.apiUserGetAll);
-		this.router.post('/delete_users', this.apiUsersDelete);
+		this.router.get('/get_all', this.getApiUsersAll);
+		this.router.post('/delete_users', this.deleteApiUsers);
 	}
 }
 

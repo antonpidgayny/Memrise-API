@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 
 let ApiMasterListSchema = new Schema({
 	dateOfAppointment: Date,
-	email : {type: String, unique : true},
+	email_fk : String,
 	position : String,
 	master : String,
 	active : Boolean,

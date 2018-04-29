@@ -1,1 +1,1 @@
-{"version":3,"file":"MasterUserRouter.js","sourceRoot":"","sources":["../../../../src/router/UserRoutes/AbstractUserRouteClasses/MasterUserRouter.ts"],"names":[],"mappings":";;;;;;;;;;;;AACA,6DAAwD;AACxD;IAAuD,oCAAmB;IACzE;eACC,iBAAO;IACR,CAAC;IAGF,uBAAC;AAAD,CAAC,AAND,CAAuD,6BAAmB,GAMzE"}
+{"version":3,"file":"MasterUserRouter.js","sourceRoot":"","sources":["../../../../src/router/UserRoutes/AbstractUserRouteClasses/MasterUserRouter.ts"],"names":[],"mappings":";;;;;;;;;;;;AACA,6DAAwD;AACxD;IAAuD,oCAAmB;IACzE;eACC,iBAAO;IACR,CAAC;IAMF,uBAAC;AAAD,CAAC,AATD,CAAuD,6BAAmB,GASzE"}

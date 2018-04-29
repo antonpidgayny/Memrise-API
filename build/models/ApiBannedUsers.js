@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = require("mongoose");
-var ApiBanListSchema = new mongoose_1.Schema({
-    BanDate: Date,
+var ApiBannedUsersListSchema = new mongoose_1.Schema({
+    banDate: Date,
     email_fk: String,
     banReason: String,
     unbanReason: String,
@@ -10,5 +10,5 @@ var ApiBanListSchema = new mongoose_1.Schema({
     active: Boolean,
     unbanDate: Date
 });
-exports.default = mongoose_1.model('ApiBanList', ApiBanListSchema);
-//# sourceMappingURL=ApiBanList.js.map
+exports.default = mongoose_1.model('ApiBannedUsersList', ApiBannedUsersListSchema);
+//# sourceMappingURL=ApiBannedUsers.js.map

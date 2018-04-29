@@ -13,8 +13,8 @@ class User{
 
 	private getContent(k,callback): void{
 		let url: string = "https://www.memrise.com/user/"+this.user_name+"/";
-		if (k===0){url+="mempals/followers/"}
-		else if (k===1) {url+="mempals/following/"}
+		if (k===0){url+="mempals/following/"}
+		else if (k===1) {url+="mempals/followers/"}
 		Slave.webPageToStr(url, (err, html) => {
 			let parser = new DomParser();	
 			let dom = parser.parseFromString(html);

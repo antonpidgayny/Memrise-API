@@ -63,7 +63,7 @@ var TestRouter = /** @class */ (function () {
         console.log(req.query.username);
         if (req.query.username) {
             User_1.default.setUserName(req.query.username);
-            User_1.default.getInfo(function (result) {
+            User_1.default.getInfo(function (err, result) {
                 res.send(JSON.stringify({ result: result }));
             });
         }

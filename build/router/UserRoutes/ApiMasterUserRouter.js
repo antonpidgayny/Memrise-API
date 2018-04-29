@@ -18,6 +18,20 @@ var ApiMasterUserRouter = /** @class */ (function (_super) {
     function ApiMasterUserRouter() {
         return _super.call(this) || this;
     }
+    ApiMasterUserRouter.prototype.makeAdmin = function (req, res) {
+    };
+    ApiMasterUserRouter.prototype.revokeAdmin = function (req, res) {
+    };
+    ApiMasterUserRouter.prototype.getApiAdminsAll = function (req, res) {
+    };
+    ApiMasterUserRouter.prototype.unbanApiUser = function (req, res) {
+    };
+    ApiMasterUserRouter.prototype.getApiUsersBanList = function (req, res) {
+    };
+    ApiMasterUserRouter.prototype.banApiUser = function (req, res) {
+        req.body.list.forEach(function (elem) {
+        });
+    };
     ApiMasterUserRouter.prototype.apiUserCreate = function (req, res) {
         var signUpDate = new Date();
         var email = req.body.email;
@@ -41,7 +55,7 @@ var ApiMasterUserRouter = /** @class */ (function (_super) {
             res.status(500).json({ error: error });
         });
     };
-    ApiMasterUserRouter.prototype.apiUserGetAll = function (req, res) {
+    ApiMasterUserRouter.prototype.getApiUsersAll = function (req, res) {
         ApiUser_1.default.find({}, function (err, users) {
             if (err) {
                 res.send('There no users =(');
@@ -49,7 +63,7 @@ var ApiMasterUserRouter = /** @class */ (function (_super) {
             res.send(users);
         });
     };
-    ApiMasterUserRouter.prototype.apiUsersDelete = function (req, res) {
+    ApiMasterUserRouter.prototype.deleteApiUsers = function (req, res) {
         req.body.list.forEach(function (elem) {
             ApiUser_1.default.deleteOne({ email: elem }, function (err) { });
         });
@@ -63,8 +77,8 @@ var ApiMasterUserRouter = /** @class */ (function (_super) {
     ApiMasterUserRouter.prototype.routes = function () {
         this.router.post('/create', this.apiUserCreate);
         this.router.get('/yell', this.masterYell);
-        this.router.get('/get_all', this.apiUserGetAll);
-        this.router.post('/delete_users', this.apiUsersDelete);
+        this.router.get('/get_all', this.getApiUsersAll);
+        this.router.post('/delete_users', this.deleteApiUsers);
     };
     return ApiMasterUserRouter;
 }(MasterUserRouter_1.default));
