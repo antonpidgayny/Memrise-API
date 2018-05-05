@@ -67,7 +67,8 @@ var ApiAdminUserRouter = /** @class */ (function (_super) {
                 try {
                     result.forEach(function (elem) {
                         if (elem.active === true) {
-                            Slave_1.default.mongooseActionsPromisify(ApiBannedUsers_1.default, 'findOneAndUpdate', { _id: elem._id }, { "$set": { "active": false } }, { new: true })
+                            var date = new Date();
+                            Slave_1.default.mongooseActionsPromisify(ApiBannedUsers_1.default, 'findOneAndUpdate', { _id: elem._id }, { "$set": { "active": false, "unbanDate": date } }, { new: true })
                                 .then(function (result) {
                                 res.send(req.body.username + " was unbanned");
                             })
@@ -84,9 +85,31 @@ var ApiAdminUserRouter = /** @class */ (function (_super) {
         });
     };
     ApiAdminUserRouter.prototype.getApiUsersBanList = function (req, res) {
-        Slave_1.default.mongoosePromisify(ApiBannedUsers_1.default, 'find', {})
-            .catch(function (e) { return res.send(e); })
-            .then(function (result) { return res.send(result); });
+        return __awaiter(this, void 0, void 0, function () {
+            var BanList_1, resp_1, e_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, Slave_1.default.mongoosePromisify(ApiBannedUsers_1.default, 'find', {})];
+                    case 1:
+                        BanList_1 = _a.sent();
+                        resp_1 = {};
+                        Object.keys(BanList_1).forEach(function (key) {
+                            if (key != 'admin') {
+                                resp_1[key] = BanList_1.key;
+                            }
+                        });
+                        res.send(resp_1);
+                        return [3 /*break*/, 3];
+                    case 2:
+                        e_1 = _a.sent();
+                        res.send(e_1);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
     };
     ApiAdminUserRouter.prototype.banApiUser = function (req, res) {
         //somebody, add the condition on empty email)))0, it's not interesting for me(...

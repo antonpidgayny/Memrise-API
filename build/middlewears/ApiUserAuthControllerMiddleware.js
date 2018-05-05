@@ -106,7 +106,6 @@ var ApiUserAuthControllerMiddleware = /** @class */ (function () {
                     case 8: return [3 /*break*/, 10];
                     case 9:
                         e_3 = _a.sent();
-                        console.log("CHTO BLEEEEATT??");
                         res.status(200).json({
                             success: false,
                             Message: "You can't fool us!"

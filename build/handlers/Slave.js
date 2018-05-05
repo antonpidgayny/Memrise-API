@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var http = require("https");
 var iconv = require("iconv-lite");
+var jwt = require("jsonwebtoken");
 var Slave = /** @class */ (function () {
     function Slave() {
     }
@@ -75,6 +76,25 @@ var Slave = /** @class */ (function () {
             });
         });
     };
+    ;
+    Slave.prototype.jwtVerifyPromisify = function (key, jwt_api_key_hash) {
+        return __awaiter(this, void 0, void 0, function () {
+            var e_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, jwt.verify(key, jwt_api_key_hash)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                    case 2:
+                        e_3 = _a.sent();
+                        return [2 /*return*/, 'exception=)'];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     Slave.prototype.webPageToStr = function (url, callback) {
         http.get(url, function (res) {
             var chunks = [];
