@@ -12,6 +12,7 @@ import ApiUserRouter from './router/UserRoutes/ApiUserRouter';
 import ApiAdminUserRouter from './router/UserRoutes/ApiAdminUserRouter';
 import ApiMasterUserRouter from './router/UserRoutes/ApiMasterUserRouter';
 import TestRouter from './router/TestRouter';
+import ApiUserAuthControllerMiddleware from './middlewears/ApiUserAuthControllerMiddleware';
 dotenv.config();
 class Server {
 
@@ -48,11 +49,11 @@ class Server {
   // application routes
   public routes(): void {
     const router: express.Router = express.Router();
-    this.app.use('/', router);
-    this.app.use('/api/v1/admin', ApiAdminUserRouter);
-    this.app.use('/api/v1/master', ApiMasterUserRouter);
-    this.app.use('/api/v1/apiuser', ApiUserRouter);
-    this.app.use('/api/v1/test', TestRouter);
+    //this.app.use('/', router);
+    //this.app.use('/api/v1/admin', ApiAdminUserRouter);
+    //this.app.use('/api/v1/master', ApiMasterUserRouter);
+    //this.app.use('/api/v1/apiuser', ApiUserRouter);
+    this.app.use('/api/v1/', TestRouter);
     //this.app.use('/api/v1/users', UserRouter);
   }
 

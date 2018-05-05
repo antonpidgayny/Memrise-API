@@ -79,6 +79,7 @@ var ApiMasterUserRouter = /** @class */ (function (_super) {
         this.router.get('/yell', this.masterYell);
         this.router.get('/get_all', this.getApiUsersAll);
         this.router.post('/delete_users', this.deleteApiUsers);
+        this.router.get('', this.getApiAdminsAll);
     };
     return ApiMasterUserRouter;
 }(MasterUserRouter_1.default));

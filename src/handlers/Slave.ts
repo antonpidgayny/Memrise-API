@@ -1,5 +1,7 @@
 import * as http from 'https';
 import * as iconv from 'iconv-lite';
+import * as jwt from 'jsonwebtoken';
+
 class Slave{
 
 	constructor(){
@@ -20,7 +22,16 @@ class Slave{
       return e;
     }
 
-  }
+  };
+
+  public async jwtVerifyPromisify(key, jwt_api_key_hash) {
+      try{
+        return await jwt.verify(key, jwt_api_key_hash);
+      } catch(e){
+            return 'exception=)';
+      }
+      
+   };
 
 	public webPageToStr(url,callback) : void {
 		    http.get(url, function(res) {

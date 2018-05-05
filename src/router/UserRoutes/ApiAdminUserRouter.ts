@@ -1,5 +1,6 @@
 import { Router, Response, Request, NextFunction } from 'express';
 import ApiUsers from '../../models/ApiUser';
+import ApiAdminList from '../../models/ApiAdminList';
 import ApiBannedUsersList from '../../models/ApiBannedUsers';
 import PrivilegeUserRouter from './AbstractUserRouteClasses/PrivilegeUserRouter';
 import Slave from '../../handlers/Slave';
@@ -20,7 +21,8 @@ class ApiAdminUserRouter extends PrivilegeUserRouter{
 				try{
 					result.forEach(function(elem){
 						if (elem.active===true){
-							Slave.mongooseActionsPromisify(ApiBannedUsersList, 'findOneAndUpdate', {_id : elem._id}, {"$set": { "active": false }}, { new : true })
+							let date = new Date();
+							Slave.mongooseActionsPromisify(ApiBannedUsersList, 'findOneAndUpdate', {_id : elem._id}, {"$set": { "active": false, "unbanDate" : date }}, { new : true })
 							.then(result =>{
 								res.send(req.body.username + " was unbanned");
 							})
@@ -35,10 +37,21 @@ class ApiAdminUserRouter extends PrivilegeUserRouter{
 			}
 		});
 	}
-	getApiUsersBanList(req : Request, res : Response): void{
-		Slave.mongoosePromisify(ApiBannedUsersList, 'find', {})
-		.catch((e) => res.send(e))
-		.then((result) => res.send(result))
+	async getApiUsersBanList(req : Request, res : Response){
+		//you have to search how to select only fields that you need=).
+		try{
+			let BanList = await Slave.mongoosePromisify(ApiBannedUsersList, 'find', {});
+			let resp = {};
+			Object.keys(BanList).forEach(function(key) {
+				if (key!='admin'){
+					resp[key] = BanList.key;
+				}
+			});
+			res.send(resp);
+		}catch(e){
+			res.send(e);
+		}
+
 	}
 	banApiUser(req : Request, res : Response): void{
 		//somebody, add the condition on empty email)))0, it's not interesting for me(...
@@ -60,39 +73,49 @@ class ApiAdminUserRouter extends PrivilegeUserRouter{
 			if (result===null){
 				res.send("User is undefined=)");
 			}else{
-				Slave.mongoosePromisify(ApiBannedUsersList, 'find', {email_fk : req.body.username})
-				.catch((e) => res.send(e))
-				.then((result) => {
-					const banDate : Date = new Date();
-					const username : string = req.body.username;
-					const description : string = req.body.description;
-					const unbanDescr : string = '';
-					const admin : string = 'Test';
-					const active : boolean = true;
-					const unbanDate : Date = new Date();
-					if (!result.length){
-						Ban(banDate, username, description, unbanDescr, admin, active, unbanDate)
-						.then((data) => res.send(data))
-						.catch((e) => res.send(e));
+				Slave.mongoosePromisify(ApiAdminList, 'find', {email_fk : req.body.username})
+				.then((result)=> {
+					if (result.length){
+						res.send("You don't have enough of rules");
 					}else{
-						var BreakException = {};
-						try{
-							result.forEach(function(elem){
-								if (elem.active===true){
-									throw BreakException;
+						Slave.mongoosePromisify(ApiBannedUsersList, 'find', {email_fk : req.body.username})
+						.catch((e) => res.send(e))
+						.then((result) => {
+							const banDate : Date = new Date();
+							const username : string = req.body.username;
+							const description : string = req.body.description;
+							const unbanDescr : string = '';
+							const admin : string = 'Test';
+							const active : boolean = true;
+							const unbanDate : Date = new Date();
+							if (!result.length){
+								Ban(banDate, username, description, unbanDescr, admin, active, unbanDate)
+								.then((data) => res.send(data))
+								.catch((e) => res.send(e));
+							}else{
+								let BreakException = {};
+								try{
+									result.forEach(function(elem){
+										if (elem.active===true){
+											throw BreakException;
+										}
+										if (result.indexOf(elem)===(result.length-1)){
+											console.log('ya tut');
+											Ban(banDate, username, description, unbanDescr, admin, active, unbanDate)
+											.then((data) => res.send(data))
+											.catch((e) => res.send(e));						
+										}
+									});
+								} catch(e){
+									res.send('User is already banned');
 								}
-								if (result.indexOf(elem)===(result.length-1)){
-									console.log('ya tut');
-									Ban(banDate, username, description, unbanDescr, admin, active, unbanDate)
-									.then((data) => res.send(data))
-									.catch((e) => res.send(e));						
-								}
-							});
-						} catch(e){
-							res.send('User is already banned');
-						}
+							}
+						});
 					}
-				});
+				})
+				.catch(e=>{
+					res.send(e);
+				})
 			}
 	    });
 	}
@@ -119,6 +142,7 @@ class ApiAdminUserRouter extends PrivilegeUserRouter{
     	});
 	}
 	getApiUsersAll(req : Request, res : Response) : void{
+		console.log('here');
 		ApiUsers.find({}, function (err, users) {
 			if (err){
 				res.send('There no users =(');
@@ -127,24 +151,36 @@ class ApiAdminUserRouter extends PrivilegeUserRouter{
 		});
 
 	}
-	deleteApiUsers(req : Request, res : Response) : void{
+	async deleteApiUsers(req : Request, res : Response){
+		//check if user not admin
 		req.body.list.forEach(function(elem){
-			ApiUsers.deleteOne({email : elem}, function(err){})
+			console.log(elem);
+			ApiUsers.deleteOne({email : elem}, function(err){});
+		});
+		req.body.list.forEach(function(elem){
+			ApiBannedUsersList.deleteOne({email_fk : elem},function(err){});
 		});
 		res.send('okay=)');
 	}
 	routes(){
-		this.router.post('/create', this.apiUserCreate);
+		/*this.router.post('/create', this.apiUserCreate);
 		this.router.get('/get_all', this.getApiUsersAll);
 		this.router.post('/delete_users', this.deleteApiUsers);
 		this.router.post('/ban_users', this.banApiUser);
 		this.router.get('/see_banlist', this.getApiUsersBanList);
-		this.router.post('/unban_user', this.unbanApiUser);
+		this.router.post('/unban_user', this.unbanApiUser);*/
+		this.router.post('/apiUserCreate', this.apiUserCreate);
+		this.router.get('/getApiUsersAll', this.getApiUsersAll);
+		this.router.post('/deleteApiUsers', this.deleteApiUsers);
+		this.router.post('/banApiUser', this.banApiUser);
+		this.router.get('/getApiUsersBanList', this.getApiUsersBanList);
+		this.router.post('/unbanApiUser', this.unbanApiUser);
 	}
 }
 
 //export
-const apiAdminUserRouter = new ApiAdminUserRouter();
+/*const apiAdminUserRouter = new ApiAdminUserRouter();
 apiAdminUserRouter.routes();
 const apiAdminUserRouterexp = apiAdminUserRouter.router;
-export default apiAdminUserRouterexp;
+export default apiAdminUserRouterexp;*/
+export default new ApiAdminUserRouter();

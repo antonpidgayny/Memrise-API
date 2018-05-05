@@ -3,6 +3,7 @@ import ApiUserAuthControllerMiddleware from '../middlewears/ApiUserAuthControlle
 import Slave from '../handlers/Slave';
 import Course from '../handlers/Course';
 import User  from '../handlers/User';
+import ApiU from './UserRoutes/ApiAdminUserRouter';
 import * as request from 'request';
 
 class TestRouter{
@@ -53,7 +54,7 @@ class TestRouter{
           });
         });
 	}
-	public getCourseInfo(req : Request, res : Response) : void{
+	/*public getCourseInfo(req : Request, res : Response) : void{
 		console.log(req.query.url);
 		let id;
 		let name;
@@ -73,13 +74,15 @@ class TestRouter{
 		}else{
 			res.send("username argument can't be empty");
 		}
-	}
+	}*/
 
 	public routes(){
-		this.router.get('/getuserinfo', this.getUserInfo);
-		this.router.get('/getcourseinfo', ApiUserAuthControllerMiddleware.jwtApiKeyGetSecurity, this.getCourseInfo);
-		this.router.post('/', ApiUserAuthControllerMiddleware.jwtApiKeyPostSecurity, this.goToMemriseHomePage);
-		this.router.get('/', ApiUserAuthControllerMiddleware.jwtApiKeyGetSecurity, this.goToMemriseHomePage);
+		this.router.post('/apiUserCreate', ApiU.apiUserCreate);
+		this.router.post('*', ApiUserAuthControllerMiddleware.jwtApiKeyPostSecurity);
+		this.router.get('*', ApiUserAuthControllerMiddleware.jwtApiKeyGetSecurity);
+		//this.router.get('/getcourseinfo', ApiUserAuthControllerMiddleware.jwtApiKeyGetSecurity);
+		//this.router.post('/', ApiUserAuthControllerMiddleware.jwtApiKeyPostSecurity, this.goToMemriseHomePage);
+		//this.router.get('/', ApiUserAuthControllerMiddleware.jwtApiKeyGetSecurity, this.goToMemriseHomePage);
 	}
 
 	public getRouter(){
