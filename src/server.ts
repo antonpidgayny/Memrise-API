@@ -25,6 +25,7 @@ class Server {
   }
   
   public config(): void {
+    //lol
 
     mongoose.connect(process.env.DB);
 

@@ -17,6 +17,7 @@ var Server = /** @class */ (function () {
         this.routes();
     }
     Server.prototype.config = function () {
+        //lol
         mongoose.connect(process.env.DB);
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());

@@ -48,27 +48,6 @@ var TestRouter = /** @class */ (function () {
             });
         });
     };
-    /*public getCourseInfo(req : Request, res : Response) : void{
-        console.log(req.query.url);
-        let id;
-        let name;
-        Course.setID(id);
-        Course.setName(name);
-        Course.getCourse(function(err, info){
-            res.send(JSON.stringify({'info' : info }));
-        });
-    }
-    public getUserInfo(req : Request, res : Response) : void{
-        console.log(req.query.username);
-        if (req.query.username){
-            User.setUserName(req.query.username);
-            User.getInfo(function(err, result){
-                res.send(JSON.stringify({result : result}));
-            });
-        }else{
-            res.send("username argument can't be empty");
-        }
-    }*/
     TestRouter.prototype.routes = function () {
         this.router.post('/apiUserCreate', ApiAdminUserRouter_1.default.apiUserCreate);
         this.router.post('*', ApiUserAuthControllerMiddleware_1.default.jwtApiKeyPostSecurity);

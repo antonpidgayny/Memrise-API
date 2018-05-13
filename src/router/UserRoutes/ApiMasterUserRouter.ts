@@ -22,6 +22,10 @@ class ApiMasterUserRouter extends MasterUserRouter{
 					throw "AlreadyAdmin=)";
 				}
 			});
+			Query = await Slave.mongoosePromisify(ApiUsers, 'find', {email : req.body.email});
+			if (!Query.length){
+				throw "Такого юзера нету)))0";
+			}
 			const dateOfAppointment : Date = new Date();
 			const email_fk : string = req.body.email;
 			const position : string = req.body.description;
@@ -39,7 +43,7 @@ class ApiMasterUserRouter extends MasterUserRouter{
 				firedReason
 			});
 			try{
-				let save_return = apiAdmin.save();
+				let save_return = await apiAdmin.save();
 				let banned = await Slave.mongoosePromisify(ApiBannedUsersList, 'find', {email_fk : req.body.email});
 				banned.forEach(function(elem){
 					if (elem.active){
@@ -133,6 +137,7 @@ class ApiMasterUserRouter extends MasterUserRouter{
     	});
 	}
 	getApiUsersAll(req : Request, res : Response) : void{
+		console.log('HERE');
 		ApiUsers.find({}, function (err, users) {
 			if (err){
 				res.send('There no users =(');
@@ -163,7 +168,8 @@ class ApiMasterUserRouter extends MasterUserRouter{
 }
 
 //export
-const apiMasterUserRouter = new ApiMasterUserRouter();
+/*const apiMasterUserRouter = new ApiMasterUserRouter();
 apiMasterUserRouter.routes();
 const apiMasterUserRouterexp = apiMasterUserRouter.router;
-export default apiMasterUserRouterexp;
+export default apiMasterUserRouterexp;*/
+export default new ApiMasterUserRouter();

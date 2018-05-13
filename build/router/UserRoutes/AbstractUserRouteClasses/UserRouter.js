@@ -5,6 +5,7 @@ var Course_1 = require("../../../handlers/Course");
 var User_1 = require("../../../handlers/User");
 var Slave_1 = require("../../../handlers/Slave");
 var request = require("request");
+var cookieSetHeaderParser = require("set-cookie-parser");
 //import ApiUser from '../../../models/ApiUser';
 var UserRouter = /** @class */ (function () {
     function UserRouter() {
@@ -24,7 +25,7 @@ var UserRouter = /** @class */ (function () {
             };
             var headers = {
                 'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-                'Accept-Encoding': 'gzip, deflate, br',
+                //'Accept-Encoding' : 'gzip, deflate, br',
                 'Accept-Language': 'uk-UA,uk;q=0.9,ru;q=0.8,en-US;q=0.7,en;q=0.6',
                 'Cache-Control': 'no-cache',
                 'Connection': 'keep-alive',
@@ -46,23 +47,38 @@ var UserRouter = /** @class */ (function () {
             j.setCookie(cookie, url);
             request.post({ url: 'https://www.memrise.com/login/', jar: j, headers: headers, form: form }, function (err, httpResponse, body) {
                 //res.send(JSON.stringify({'cookies' : httpResponse.headers['set-cookie']}));
-                url = 'https://www.memrise.com/home/';
+                url = 'https://www.memrise.com/';
                 j = request.jar();
                 cookie_str = '';
                 //j.setCookie(httpResponse.headers['set-cookie'], url);
                 //console.log(typeof httpResponse.headers['set-cookie']);
                 //console.log(httpResponse.headers['set-cookie'].toString());
-                res.send(httpResponse);
-                Object.keys(httpResponse.headers['set-cookie']).forEach(function (elem) {
-                    cookie_str += httpResponse.headers['set-cookie'][elem];
+                //res.send(httpResponse);
+                /*Object.keys(httpResponse.headers['set-cookie']).forEach(function(elem) {
+                    cookie_str+=httpResponse.headers['set-cookie'][elem];
+                });*/
+                //cookie_str += httpResponse.headers['set-cookie'][0] + "; " + httpResponse.headers['set-cookie'][1];
+                //console.log(cookieParser.JSONCookie(httpResponse.headers['set-cookie'][0]));
+                var cookies__ = cookieSetHeaderParser.parse(httpResponse, {
+                    decodeValues: true // default: true
                 });
+                //console.log(cookies__);
+                cookie_str += cookies__['1'].name + '=' + cookies__['1'].value + '; ';
                 cookie = request.cookie(cookie_str);
-                console.log(cookie_str);
+                console.log(cookie);
                 j.setCookie(cookie, url);
-                request.get({ url: 'https://www.memrise.com/home/', jar: j, headers: headers }, function (err, httpResponse, body) {
+                headers['Content-Type'] = 'text/html; charset=utf-8';
+                headers['Accept-Charset'] = 'utf-8';
+                //console.log(headers);
+                request({ url: 'https://www.memrise.com/home/', jar: j, headers: headers }, function (err, httpResponse, body) {
                     //res.send(JSON.stringify({'cookies' : httpResponse.headers['set-cookie']}));
                     //res.send(iconv.decode(body, 'utf-8'));
-                    console.log(body);
+                    //console.log(body);
+                    console.log('WHAT&');
+                    //res.send(body);
+                    //res.write(body, "utf8");
+                    //res.send();
+                    res.send(body);
                 });
             });
         });

@@ -31,7 +31,7 @@ class ApiUserAuthControllerMiddleware{
 				let inMasters = await Slave.mongoosePromisify(ApiMasters, 'find', {email_fk : jwtVerifyResult});
 				if (inMasters.length){
 						let func = req.url.split('?')[0].slice(1);
-						ApiAdminUserRouter[func](req, res);
+						ApiMasterUserRouter[func](req, res);
 				}else{
 					let inAdmins = await Slave.mongoosePromisify(ApiAdmins, 'find', {email_fk : jwtVerifyResult});
 					if (inAdmins.length){
@@ -39,9 +39,10 @@ class ApiUserAuthControllerMiddleware{
 						ApiAdminUserRouter[func](req, res);
 					}else{
 						let func = req.url.split('?')[0].slice(1);
-						console.log(func);
-						ApiAdminUserRouter[func](req, res);
+						//console.log(func);
+						//ApiMasterUserRouter[func](req, res);
 						//ApiUserRouter[func](req, res);
+						ApiUserRouter[func](req, res);
 					}
 				}
 			}catch(e){
@@ -74,7 +75,7 @@ class ApiUserAuthControllerMiddleware{
 				let inMasters = await Slave.mongoosePromisify(ApiMasters, 'find', {email_fk : jwtVerifyResult});
 				if (inMasters.length){
 						let func = req.url.split('?')[0].slice(1);
-						ApiAdminUserRouter[func](req, res);
+						ApiMasterUserRouter[func](req, res);
 				}else{
 					let inAdmins = await Slave.mongoosePromisify(ApiAdmins, 'find', {email_fk : jwtVerifyResult});
 					if (inAdmins.length){
@@ -83,8 +84,9 @@ class ApiUserAuthControllerMiddleware{
 					}else{
 						let func = req.url.split('?')[0].slice(1);
 						console.log(func);
-						ApiAdminUserRouter[func](req, res);
-						//ApiUserRouter[func](req, res);
+						//ApiMasterUserRouter[func](req, res);
+						ApiUserRouter[func](req, res);
+						//ApiAdminUserRouter[func](req, res);
 					}
 				}
 			}catch(e){

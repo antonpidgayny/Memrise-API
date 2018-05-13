@@ -62,7 +62,7 @@ var ApiMasterUserRouter = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 7, , 8]);
+                        _a.trys.push([0, 9, , 10]);
                         return [4 /*yield*/, Slave_1.default.mongoosePromisify(ApiAdminList_1.default, 'find', { email_fk: req.body.email })];
                     case 1:
                         Query = _a.sent();
@@ -71,11 +71,17 @@ var ApiMasterUserRouter = /** @class */ (function (_super) {
                                 throw "AlreadyAdmin=)";
                             }
                         });
+                        return [4 /*yield*/, Slave_1.default.mongoosePromisify(ApiUser_1.default, 'find', { email: req.body.email })];
+                    case 2:
+                        Query = _a.sent();
+                        if (!Query.length) {
+                            throw "Такого юзера нету)))0";
+                        }
                         dateOfAppointment = new Date();
                         email_fk = req.body.email;
                         position = req.body.description;
                         return [4 /*yield*/, Slave_1.default.jwtVerifyPromisify(req.body.key, process.env.jwt_api_key_hash)];
-                    case 2:
+                    case 3:
                         master = _a.sent();
                         active = false;
                         firedDate = new Date();
@@ -89,12 +95,14 @@ var ApiMasterUserRouter = /** @class */ (function (_super) {
                             firedDate: firedDate,
                             firedReason: firedReason
                         });
-                        _a.label = 3;
-                    case 3:
-                        _a.trys.push([3, 5, , 6]);
-                        save_return = apiAdmin.save();
-                        return [4 /*yield*/, Slave_1.default.mongoosePromisify(ApiBannedUsers_1.default, 'find', { email_fk: req.body.email })];
+                        _a.label = 4;
                     case 4:
+                        _a.trys.push([4, 7, , 8]);
+                        return [4 /*yield*/, apiAdmin.save()];
+                    case 5:
+                        save_return = _a.sent();
+                        return [4 /*yield*/, Slave_1.default.mongoosePromisify(ApiBannedUsers_1.default, 'find', { email_fk: req.body.email })];
+                    case 6:
                         banned = _a.sent();
                         banned.forEach(function (elem) {
                             if (elem.active) {
@@ -103,16 +111,16 @@ var ApiMasterUserRouter = /** @class */ (function (_super) {
                             }
                         });
                         res.send(save_return);
-                        return [3 /*break*/, 6];
-                    case 5:
+                        return [3 /*break*/, 8];
+                    case 7:
                         e_1 = _a.sent();
                         throw e_1;
-                    case 6: return [3 /*break*/, 8];
-                    case 7:
+                    case 8: return [3 /*break*/, 10];
+                    case 9:
                         e_2 = _a.sent();
                         res.send(e_2);
-                        return [3 /*break*/, 8];
-                    case 8: return [2 /*return*/];
+                        return [3 /*break*/, 10];
+                    case 10: return [2 /*return*/];
                 }
             });
         });
@@ -216,6 +224,7 @@ var ApiMasterUserRouter = /** @class */ (function (_super) {
         });
     };
     ApiMasterUserRouter.prototype.getApiUsersAll = function (req, res) {
+        console.log('HERE');
         ApiUser_1.default.find({}, function (err, users) {
             if (err) {
                 res.send('There no users =(');
@@ -244,8 +253,9 @@ var ApiMasterUserRouter = /** @class */ (function (_super) {
     return ApiMasterUserRouter;
 }(MasterUserRouter_1.default));
 //export
-var apiMasterUserRouter = new ApiMasterUserRouter();
+/*const apiMasterUserRouter = new ApiMasterUserRouter();
 apiMasterUserRouter.routes();
-var apiMasterUserRouterexp = apiMasterUserRouter.router;
-exports.default = apiMasterUserRouterexp;
+const apiMasterUserRouterexp = apiMasterUserRouter.router;
+export default apiMasterUserRouterexp;*/
+exports.default = new ApiMasterUserRouter();
 //# sourceMappingURL=ApiMasterUserRouter.js.map

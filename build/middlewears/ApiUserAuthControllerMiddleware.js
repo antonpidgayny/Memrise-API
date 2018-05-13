@@ -39,7 +39,9 @@ var jwt = require("jsonwebtoken");
 var ApiAdminList_1 = require("../models/ApiAdminList");
 var ApiMasterList_1 = require("../models/ApiMasterList");
 var Slave_1 = require("../handlers/Slave");
+var ApiUserRouter_1 = require("../router/UserRoutes/ApiUserRouter");
 var ApiAdminUserRouter_1 = require("../router/UserRoutes/ApiAdminUserRouter");
+var ApiMasterUserRouter_1 = require("../router/UserRoutes/ApiMasterUserRouter");
 var ApiUserAuthControllerMiddleware = /** @class */ (function () {
     function ApiUserAuthControllerMiddleware() {
     }
@@ -82,7 +84,7 @@ var ApiUserAuthControllerMiddleware = /** @class */ (function () {
                         inMasters = _a.sent();
                         if (!inMasters.length) return [3 /*break*/, 4];
                         func = req.url.split('?')[0].slice(1);
-                        ApiAdminUserRouter_1.default[func](req, res);
+                        ApiMasterUserRouter_1.default[func](req, res);
                         return [3 /*break*/, 6];
                     case 4: return [4 /*yield*/, Slave_1.default.mongoosePromisify(ApiAdminList_1.default, 'find', { email_fk: jwtVerifyResult })];
                     case 5:
@@ -93,9 +95,10 @@ var ApiUserAuthControllerMiddleware = /** @class */ (function () {
                         }
                         else {
                             func = req.url.split('?')[0].slice(1);
-                            console.log(func);
-                            ApiAdminUserRouter_1.default[func](req, res);
+                            //console.log(func);
+                            //ApiMasterUserRouter[func](req, res);
                             //ApiUserRouter[func](req, res);
+                            ApiUserRouter_1.default[func](req, res);
                         }
                         _a.label = 6;
                     case 6: return [3 /*break*/, 8];
@@ -157,7 +160,7 @@ var ApiUserAuthControllerMiddleware = /** @class */ (function () {
                         inMasters = _a.sent();
                         if (!inMasters.length) return [3 /*break*/, 4];
                         func = req.url.split('?')[0].slice(1);
-                        ApiAdminUserRouter_1.default[func](req, res);
+                        ApiMasterUserRouter_1.default[func](req, res);
                         return [3 /*break*/, 6];
                     case 4: return [4 /*yield*/, Slave_1.default.mongoosePromisify(ApiAdminList_1.default, 'find', { email_fk: jwtVerifyResult })];
                     case 5:
@@ -169,8 +172,9 @@ var ApiUserAuthControllerMiddleware = /** @class */ (function () {
                         else {
                             func = req.url.split('?')[0].slice(1);
                             console.log(func);
-                            ApiAdminUserRouter_1.default[func](req, res);
-                            //ApiUserRouter[func](req, res);
+                            //ApiMasterUserRouter[func](req, res);
+                            ApiUserRouter_1.default[func](req, res);
+                            //ApiAdminUserRouter[func](req, res);
                         }
                         _a.label = 6;
                     case 6: return [3 /*break*/, 8];

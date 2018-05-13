@@ -15,6 +15,9 @@
     "@types/cookie-parser": "^1.4.1",
     "@types/cors": "^2.8.3",
     "@types/request": "^2.47.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
     "body-parser": "^1.18.2",
     "cookie": "^0.3.1",
     "cookie-parser": "^1.4.3",
@@ -35,7 +38,11 @@
     "passport": "^0.4.0",
     "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
-    "request": "^2.85.0"
+    "request": "^2.85.0",
+    "set-cookie-parser": "^2.1.1",
+    "start-server-webpack-plugin": "^2.2.5",
+    "webpack": "^4.8.3",
+    "webpack-node-externals": "^1.7.2"
   },
   "devDependencies": {
     "@types/dotenv": "^4.0.3",
