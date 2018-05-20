@@ -1,10 +1,31 @@
 import * as http from 'https';
 import * as iconv from 'iconv-lite';
 import * as jwt from 'jsonwebtoken';
+import * as prom from 'es6-promisify';
+import * as Prm from 'es6-promise';
+import * as request from 'request';
+import * as cookieSetHeaderParser from 'set-cookie-parser';
 
 class Slave{
-
+  private headers;
+  private requestGetPromisified;
+  private requestPostPromisified;
 	constructor(){
+      this.headers = {
+        'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+        'Accept-Language': 'uk-UA,uk;q=0.9,ru;q=0.8,en-US;q=0.7,en;q=0.6',
+        'Cache-Control' : 'no-cache',
+        'Connection' : 'keep-alive',
+        'Content-Type' : 'application/x-www-form-urlencoded',
+        'Host' : 'www.memrise.com',
+        'Origin' : 'https://www.memrise.com',
+        'Pragma' : 'no-cache',
+        'Referer' : 'https://www.memrise.com/login/',
+        'Upgrade-Insecure-Requests' : 1,
+        'Accept-Charset' : 'utf-8'
+      },
+      this.requestGetPromisified = prom.promisify(request.get),
+      this.requestPostPromisified = prom.promisify(request.post)
 	}
 
   public async mongoosePromisify(table, method, parameters){
@@ -31,40 +52,61 @@ class Slave{
             return 'exception=)';
       }
       
-   };
+  };
+  public async getMemriseRequest(url, cookies_str, cookies_url){
+    if (cookies_url == undefined){
+      cookies_url = url;
+    } 
+    let resp = await this.requestGetPromisified({url : url, jar : this.formCoookies(cookies_str, cookies_url) , headers : this.headers});
+    let cookies = cookieSetHeaderParser.parse(resp, {
+      decodeValues: true  // default: true
+    });
+    //console.log(resp);
+    return ({cookie : cookies, body : resp.body});
+  }
+  public async postMemriseRequest(url, cookies_str, form){
+    let resp = await this.requestPostPromisified({url:url, jar : this.formCoookies(cookies_str, url), headers : this.headers, form: form});
+    let cookies = cookieSetHeaderParser.parse(resp, {
+      decodeValues: true  // default: true
+    });
+    return ({cookie : cookies, body : resp.body});
+  }
+  private formCoookies(cookies_str, url){
+      let j = request.jar();
+      let cookie = request.cookie(cookies_str);
+      console.log(cookie);
+      j.setCookie(cookie, url);
+      return j;
+  }
+	public async auth(url){
+    try {
+      let resp = await this.getMemriseRequest(url, "");
+      let pos = (resp.body.search("csrfmiddlewaretoken"));
+      console.log(pos);
+      let csrfmiddlewaretoken = resp.body.slice(pos+28,pos+92);
+      let form = {
+        'csrfmiddlewaretoken': csrfmiddlewaretoken,
+        'username' : process.env.email,
+        'password' : process.env.password,
+        'next' : ''
+      };
+      let cookie_str = 'csrftoken='+csrfmiddlewaretoken;
+      url = 'https://www.memrise.com' ;
+      resp = await this.postMemriseRequest('https://www.memrise.com/login/', cookie_str, form);
+      console.log(resp.cookie['1'].name);
+      cookie_str = resp.cookie['1'].name+'='+resp.cookie['1'].value+'; ';
+      resp = await this.getMemriseRequest("https://www.memrise.com/home/", cookie_str);
+      return resp.cookie;
+    }catch(e){
+      console.log(e);
+      throw "lol"
+    }
 
-	public webPageToStr(url,callback) : void {
-		    http.get(url, function(res) {
-            var chunks = [];
-            var setcookie = res.headers["set-cookie"];
-            var cookies = '';
-            if ( setcookie ) {
-              setcookie.forEach(
-                function ( cookiestr ) {
-                   cookies+=' '+cookiestr;
-                }
-              );
-            }
-            //console.log(cookies);
-            // Collect all the response chunks.
-            res.on('data', function(chunk) {
-              chunks.push(chunk);
-            });
-
-            // The response has been fully read here.
-            res.on('end', function() {
-              // Collect all the chunks into one buffer.
-              var buffer = Buffer.concat(chunks);
-
-              // Convert to a (UTF-8-encoded) string.
-              var str = iconv.decode(buffer, 'utf-8');
-
-              // Call the callback with the string.
-              return callback(null, str);
-            });
-          });
-	}
-
+    /*console.log(res);
+    var chunks = [];
+    var setcookie = res.headers["set-cookie"];
+    var cookies = '';*/
+  }
 }
 
 //export

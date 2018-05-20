@@ -6,6 +6,7 @@
   "scripts": {
     "server": "tsc && nodemon ./build/index.js",
     "start": "tsc && node ./build/index.js",
+    "serve": "cd build/ && nodemon ./index.js",
     "ts:watch": "tsc -w"
   },
   "author": "",
@@ -26,6 +27,7 @@
     "dom-parser": "^0.1.5",
     "dotenv": "^5.0.1",
     "es6-promise": "^4.2.4",
+    "es6-promisify": "^6.0.0",
     "express": "^4.16.3",
     "helmet": "^3.12.0",
     "https": "^1.0.0",
