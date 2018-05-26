@@ -54,9 +54,10 @@ var UserRouter = /** @class */ (function () {
                     case 0: return [4 /*yield*/, Slave_1.default.auth("https://www.memrise.com/login/")];
                     case 1:
                         cookies_obj = _a.sent();
+                        console.log(cookies_obj);
                         this.cookies = '';
-                        this.cookies += cookies_obj['0'].name + '=' + cookies_obj['0'].value + '; ';
                         this.cookies += cookies_obj['1'].name + '=' + cookies_obj['1'].value + '; ';
+                        this.cookies += cookies_obj['0'].name + '=' + cookies_obj['0'].value + '; ';
                         return [2 /*return*/, this.cookies];
                 }
             });
@@ -70,9 +71,13 @@ var UserRouter = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.auth(req, res)];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, Slave_1.default.getMemriseRequest('https://www.memrise.com/ajax/courses/dashboard/?courses_filter=most_recent&offset=0&limit=50&get_review_count=false', this.cookies, 'https://www.memrise.com/home/')];
+                        return [4 /*yield*/, Slave_1.default.getMemriseRequest('https://www.memrise.com/ajax/courses/dashboard/?courses_filter=most_recent&offset=0&limit=50&get_review_count=false', this.cookies, 'https://www.memrise.com/home')];
                     case 2:
                         resp = _a.sent();
+                        //************************************************************
+                        //************************************************************
+                        //розпарсь Джи Сона
+                        //*************************************************************
                         res.send(resp);
                         return [2 /*return*/];
                 }

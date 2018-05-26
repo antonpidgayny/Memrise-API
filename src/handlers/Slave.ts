@@ -7,7 +7,7 @@ import * as request from 'request';
 import * as cookieSetHeaderParser from 'set-cookie-parser';
 
 class Slave{
-  private headers;
+  public headers;
   private requestGetPromisified;
   private requestPostPromisified;
 	constructor(){
@@ -54,9 +54,15 @@ class Slave{
       
   };
   public async getMemriseRequest(url, cookies_str, cookies_url){
+    //this.headers['Content-Type'] = 'text/html; charset=utf-8';
     if (cookies_url == undefined){
       cookies_url = url;
-    } 
+    }else{
+      this.headers.Referer = 'https://www.memrise.com/home/';
+      this.headers['Content-Type'] = 'text/html; charset=utf-8' ;
+      //console.log(this.headers);
+      console.log(cookies_url);
+    }
     let resp = await this.requestGetPromisified({url : url, jar : this.formCoookies(cookies_str, cookies_url) , headers : this.headers});
     let cookies = cookieSetHeaderParser.parse(resp, {
       decodeValues: true  // default: true
@@ -65,6 +71,7 @@ class Slave{
     return ({cookie : cookies, body : resp.body});
   }
   public async postMemriseRequest(url, cookies_str, form){
+    //this.headers['Content-Type'] = 'application/x-www-form-urlencoded';
     let resp = await this.requestPostPromisified({url:url, jar : this.formCoookies(cookies_str, url), headers : this.headers, form: form});
     let cookies = cookieSetHeaderParser.parse(resp, {
       decodeValues: true  // default: true
@@ -74,15 +81,15 @@ class Slave{
   private formCoookies(cookies_str, url){
       let j = request.jar();
       let cookie = request.cookie(cookies_str);
-      console.log(cookie);
       j.setCookie(cookie, url);
+      console.log(j);
       return j;
   }
 	public async auth(url){
     try {
       let resp = await this.getMemriseRequest(url, "");
       let pos = (resp.body.search("csrfmiddlewaretoken"));
-      console.log(pos);
+      //console.log(pos);
       let csrfmiddlewaretoken = resp.body.slice(pos+28,pos+92);
       let form = {
         'csrfmiddlewaretoken': csrfmiddlewaretoken,
@@ -93,9 +100,9 @@ class Slave{
       let cookie_str = 'csrftoken='+csrfmiddlewaretoken;
       url = 'https://www.memrise.com' ;
       resp = await this.postMemriseRequest('https://www.memrise.com/login/', cookie_str, form);
-      console.log(resp.cookie['1'].name);
+      //console.log(resp.cookie['1'].name);
       cookie_str = resp.cookie['1'].name+'='+resp.cookie['1'].value+'; ';
-      resp = await this.getMemriseRequest("https://www.memrise.com/home/", cookie_str);
+      resp = await this.getMemriseRequest("https://www.memrise.com/home/", cookie_str); 
       return resp.cookie;
     }catch(e){
       console.log(e);

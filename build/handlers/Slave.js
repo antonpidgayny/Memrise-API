@@ -117,8 +117,15 @@ var Slave = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        //this.headers['Content-Type'] = 'text/html; charset=utf-8';
                         if (cookies_url == undefined) {
                             cookies_url = url;
+                        }
+                        else {
+                            this.headers.Referer = 'https://www.memrise.com/home/';
+                            this.headers['Content-Type'] = 'text/html; charset=utf-8';
+                            //console.log(this.headers);
+                            console.log(cookies_url);
                         }
                         return [4 /*yield*/, this.requestGetPromisified({ url: url, jar: this.formCoookies(cookies_str, cookies_url), headers: this.headers })];
                     case 1:
@@ -151,8 +158,8 @@ var Slave = /** @class */ (function () {
     Slave.prototype.formCoookies = function (cookies_str, url) {
         var j = request.jar();
         var cookie = request.cookie(cookies_str);
-        console.log(cookie);
         j.setCookie(cookie, url);
+        console.log(j);
         return j;
     };
     Slave.prototype.auth = function (url) {
@@ -166,7 +173,6 @@ var Slave = /** @class */ (function () {
                     case 1:
                         resp = _a.sent();
                         pos = (resp.body.search("csrfmiddlewaretoken"));
-                        console.log(pos);
                         csrfmiddlewaretoken = resp.body.slice(pos + 28, pos + 92);
                         form = {
                             'csrfmiddlewaretoken': csrfmiddlewaretoken,
@@ -179,7 +185,7 @@ var Slave = /** @class */ (function () {
                         return [4 /*yield*/, this.postMemriseRequest('https://www.memrise.com/login/', cookie_str, form)];
                     case 2:
                         resp = _a.sent();
-                        console.log(resp.cookie['1'].name);
+                        //console.log(resp.cookie['1'].name);
                         cookie_str = resp.cookie['1'].name + '=' + resp.cookie['1'].value + '; ';
                         return [4 /*yield*/, this.getMemriseRequest("https://www.memrise.com/home/", cookie_str)];
                     case 3:

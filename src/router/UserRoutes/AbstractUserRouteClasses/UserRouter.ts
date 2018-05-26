@@ -18,9 +18,10 @@ export default abstract class UserRouter{
 	public abstract apiUserCreate(req : Request, res : Response):void;
 	public async auth(req : Request, res : Response){
         let cookies_obj = await Slave.auth("https://www.memrise.com/login/");
+        console.log(cookies_obj);
         this.cookies = '';
-        this.cookies += cookies_obj['0'].name+'='+cookies_obj['0'].value+'; ';
         this.cookies += cookies_obj['1'].name+'='+cookies_obj['1'].value+'; ';
+        this.cookies += cookies_obj['0'].name+'='+cookies_obj['0'].value+'; ';
         return this.cookies;
 		//request.get({url:' jar : j, headers : headers}, function(err,httpResponse,body){
 		//	res.send(iconv.decode(body, 'utf-8'));
@@ -28,7 +29,12 @@ export default abstract class UserRouter{
 	}
 	public async getSelfCourseInfo(req : Request, res : Response){
 		await this.auth(req, res);
-		let resp = await Slave.getMemriseRequest('https://www.memrise.com/ajax/courses/dashboard/?courses_filter=most_recent&offset=0&limit=50&get_review_count=false', this.cookies, 'https://www.memrise.com/home/');
+		let resp = await Slave.getMemriseRequest('https://www.memrise.com/ajax/courses/dashboard/?courses_filter=most_recent&offset=0&limit=50&get_review_count=false', this.cookies, 'https://www.memrise.com/home');
+		//************************************************************
+		//************************************************************
+		//розпарсь Джи Сона
+		//*************************************************************
+
 		res.send(resp);
 	}
 	public getCourseInfo(req : Request, res : Response) : void{
