@@ -95,9 +95,7 @@ var ApiUserAuthControllerMiddleware = /** @class */ (function () {
                         }
                         else {
                             func = req.url.split('?')[0].slice(1);
-                            //console.log(func);
-                            //ApiMasterUserRouter[func](req, res);
-                            //ApiUserRouter[func](req, res);
+                            console.log("HOLOP");
                             ApiUserRouter_1.default[func](req, res);
                         }
                         _a.label = 6;
@@ -172,9 +170,7 @@ var ApiUserAuthControllerMiddleware = /** @class */ (function () {
                         else {
                             func = req.url.split('?')[0].slice(1);
                             console.log(func);
-                            //ApiMasterUserRouter[func](req, res);
                             ApiUserRouter_1.default[func](req, res);
-                            //ApiAdminUserRouter[func](req, res);
                         }
                         _a.label = 6;
                     case 6: return [3 /*break*/, 8];

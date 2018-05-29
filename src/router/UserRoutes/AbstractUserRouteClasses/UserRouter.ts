@@ -2,6 +2,7 @@ import { Router, Response, Request, NextFunction } from 'express';
 import Course from '../../../handlers/Course';
 import User from '../../../handlers/User';
 import Slave from '../../../handlers/Slave';
+import Requester from '../../../handlers/Requester';
 import * as cookieParser from 'cookie-parser';
 import * as iconv from 'iconv-lite';
 import * as request from 'request';
@@ -17,24 +18,20 @@ export default abstract class UserRouter{
 	}
 	public abstract apiUserCreate(req : Request, res : Response):void;
 	public async auth(req : Request, res : Response){
-        let cookies_obj = await Slave.auth("https://www.memrise.com/login/");
-        console.log(cookies_obj);
+        let cookies_obj = await Requester.auth("https://www.memrise.com/login/");
+        //console.log(cookies_obj);
         this.cookies = '';
         this.cookies += cookies_obj['1'].name+'='+cookies_obj['1'].value+'; ';
         this.cookies += cookies_obj['0'].name+'='+cookies_obj['0'].value+'; ';
+        res.send(this.cookies);
         return this.cookies;
-		//request.get({url:' jar : j, headers : headers}, function(err,httpResponse,body){
-		//	res.send(iconv.decode(body, 'utf-8'));
-		//});
 	}
 	public async getSelfCourseInfo(req : Request, res : Response){
-		await this.auth(req, res);
-		let resp = await Slave.getMemriseRequest('https://www.memrise.com/ajax/courses/dashboard/?courses_filter=most_recent&offset=0&limit=50&get_review_count=false', this.cookies, 'https://www.memrise.com/home');
-		//************************************************************
+		console.log(this.cookies);
+		let resp = await Requester.getMemriseRequest('https://www.memrise.com/ajax/courses/dashboard/?courses_filter=most_recent&offset=0&limit=50&get_review_count=false', this.cookies, 'https://www.memrise.com/home');
 		//************************************************************
 		//розпарсь Джи Сона
 		//*************************************************************
-
 		res.send(resp);
 	}
 	public getCourseInfo(req : Request, res : Response) : void{
@@ -48,7 +45,6 @@ export default abstract class UserRouter{
 		});
 	}
 	public getUserInfo(req : Request, res : Response) : void{
-		//console.log(req.query.username);
 		if (req.query.username){
 			User.setUserName(req.query.username);
 			User.getInfo(function(err, result){

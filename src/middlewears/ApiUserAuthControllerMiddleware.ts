@@ -39,9 +39,7 @@ class ApiUserAuthControllerMiddleware{
 						ApiAdminUserRouter[func](req, res);
 					}else{
 						let func = req.url.split('?')[0].slice(1);
-						//console.log(func);
-						//ApiMasterUserRouter[func](req, res);
-						//ApiUserRouter[func](req, res);
+						console.log("HOLOP");
 						ApiUserRouter[func](req, res);
 					}
 				}
@@ -84,9 +82,7 @@ class ApiUserAuthControllerMiddleware{
 					}else{
 						let func = req.url.split('?')[0].slice(1);
 						console.log(func);
-						//ApiMasterUserRouter[func](req, res);
 						ApiUserRouter[func](req, res);
-						//ApiAdminUserRouter[func](req, res);
 					}
 				}
 			}catch(e){

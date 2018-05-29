@@ -38,7 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var Course_1 = require("../../../handlers/Course");
 var User_1 = require("../../../handlers/User");
-var Slave_1 = require("../../../handlers/Slave");
+var Requester_1 = require("../../../handlers/Requester");
 //import ApiUser from '../../../models/ApiUser';
 var UserRouter = /** @class */ (function () {
     function UserRouter() {
@@ -51,13 +51,14 @@ var UserRouter = /** @class */ (function () {
             var cookies_obj;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, Slave_1.default.auth("https://www.memrise.com/login/")];
+                    case 0: return [4 /*yield*/, Requester_1.default.auth("https://www.memrise.com/login/")];
                     case 1:
                         cookies_obj = _a.sent();
-                        console.log(cookies_obj);
+                        //console.log(cookies_obj);
                         this.cookies = '';
                         this.cookies += cookies_obj['1'].name + '=' + cookies_obj['1'].value + '; ';
                         this.cookies += cookies_obj['0'].name + '=' + cookies_obj['0'].value + '; ';
+                        res.send(this.cookies);
                         return [2 /*return*/, this.cookies];
                 }
             });
@@ -68,13 +69,11 @@ var UserRouter = /** @class */ (function () {
             var resp;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.auth(req, res)];
+                    case 0:
+                        console.log(this.cookies);
+                        return [4 /*yield*/, Requester_1.default.getMemriseRequest('https://www.memrise.com/ajax/courses/dashboard/?courses_filter=most_recent&offset=0&limit=50&get_review_count=false', this.cookies, 'https://www.memrise.com/home')];
                     case 1:
-                        _a.sent();
-                        return [4 /*yield*/, Slave_1.default.getMemriseRequest('https://www.memrise.com/ajax/courses/dashboard/?courses_filter=most_recent&offset=0&limit=50&get_review_count=false', this.cookies, 'https://www.memrise.com/home')];
-                    case 2:
                         resp = _a.sent();
-                        //************************************************************
                         //************************************************************
                         //розпарсь Джи Сона
                         //*************************************************************
@@ -95,7 +94,6 @@ var UserRouter = /** @class */ (function () {
         });
     };
     UserRouter.prototype.getUserInfo = function (req, res) {
-        //console.log(req.query.username);
         if (req.query.username) {
             User_1.default.setUserName(req.query.username);
             User_1.default.getInfo(function (err, result) {
