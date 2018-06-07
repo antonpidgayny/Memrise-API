@@ -21,12 +21,12 @@ export default abstract class UserRouter{
         let cookies_obj = await Requester.auth("https://www.memrise.com/login/");
         //console.log(cookies_obj);
         this.cookies = '';
-        this.cookies += cookies_obj['1'].name+'='+cookies_obj['1'].value+';';
-        this.cookies += cookies_obj['0'].name+'='+cookies_obj['0'].value;
+        this.cookies += cookies_obj['1'].name+'='+cookies_obj['1'].value+'; ';
+        this.cookies += cookies_obj['0'].name+'='+cookies_obj['0'].value+'; ';
         res.send(this.cookies);
         return this.cookies;
 	}
-	public async getSelfCourseInfo(req : Request, res : Response){
+	public async getSelfCourseStat(req : Request, res : Response){
 		console.log(this.cookies);
 		let resp = await Requester.getMemriseRequest('https://www.memrise.com/ajax/courses/dashboard/?courses_filter=most_recent&offset=0&limit=50&get_review_count=false', this.cookies, 'https://www.memrise.com/home');
 		//************************************************************
@@ -34,42 +34,29 @@ export default abstract class UserRouter{
 		//*************************************************************
 		res.send(resp);
 	}
-	public getCourseInfo(req : Request, res : Response) : void{
-		//console.log(req.query.url);
+
+	public async getSelfCourseInfo(req : Request, res : Response){
 		let id = req.query.id;
 		let name = req.query.name;
-		Course.setID(id);
-		Course.setName(name);
-		Course.getCourse(function(err, info){
-			res.send(JSON.stringify({'info' : info }));
-		});
+		let course = new Course(name,id)
+		let info = await course.getCourse_auth(this.cookies,"Антон_Підгайний");
+		res.send(JSON.stringify({'info' : info }));
 	}
-	public getUserInfo(req : Request, res : Response) : void{
+
+	public async getCourseInfo(req : Request, res : Response){
+		let id = req.query.id;
+		let name = req.query.name;
+		let course = new Course(name,id)
+		let info = await course.getCourse();
+		res.send(JSON.stringify({'info' : info }));
+	
+	}
+	public async getUserInfo(req : Request, res : Response){
 		if (req.query.username){
 			User.setUserName(req.query.username);
-			User.getInfo(function(err, result){
-				res.send(JSON.stringify({result : result}));
-			});
-		}else{
-			res.send("username argument can't be empty");
-		}
-	}
-	public async createCourse(req : Request, res : Response){
-		let obj = {
-			name : req.body.name,
-			//for : req.body.for,
-			//teaching : req.body.teaching,
-			tags : req.body.tags,
-			desc : req.body.desc,
-			short : req.body.short
-		};
-		let resp = await Requester.create(obj, "https://www.memrise.com/course/create/", this.cookies);
-		res.send(resp);
-	}
-	public async updateCourse(req : Request, res : Response){
-		let url = "https://www.memrise.com"+req.body.url;
-		console.log(url);
-		res.send(await Requester.add(req.body.list, url, this.cookies));
+			let result = await User.getInfo();
+			res.send(JSON.stringify({result : result}));
+		}else{res.send("username argument can't be empty");}
 	}
 	public abstract routes():void;
 }
