@@ -56,8 +56,8 @@ var UserRouter = /** @class */ (function () {
                         cookies_obj = _a.sent();
                         //console.log(cookies_obj);
                         this.cookies = '';
-                        this.cookies += cookies_obj['1'].name + '=' + cookies_obj['1'].value + '; ';
-                        this.cookies += cookies_obj['0'].name + '=' + cookies_obj['0'].value + '; ';
+                        this.cookies += cookies_obj['1'].name + '=' + cookies_obj['1'].value + ';';
+                        this.cookies += cookies_obj['0'].name + '=' + cookies_obj['0'].value;
                         res.send(this.cookies);
                         return [2 /*return*/, this.cookies];
                 }
@@ -103,6 +103,46 @@ var UserRouter = /** @class */ (function () {
         else {
             res.send("username argument can't be empty");
         }
+    };
+    UserRouter.prototype.createCourse = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var obj, resp;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        obj = {
+                            name: req.body.name,
+                            //for : req.body.for,
+                            //teaching : req.body.teaching,
+                            tags: req.body.tags,
+                            desc: req.body.desc,
+                            short: req.body.short
+                        };
+                        return [4 /*yield*/, Requester_1.default.create(obj, "https://www.memrise.com/course/create/", this.cookies)];
+                    case 1:
+                        resp = _a.sent();
+                        res.send(resp);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    UserRouter.prototype.updateCourse = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var url, _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        url = "https://www.memrise.com" + req.body.url;
+                        console.log(url);
+                        _b = (_a = res).send;
+                        return [4 /*yield*/, Requester_1.default.add(req.body.list, url, this.cookies)];
+                    case 1:
+                        _b.apply(_a, [_c.sent()]);
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     return UserRouter;
 }());

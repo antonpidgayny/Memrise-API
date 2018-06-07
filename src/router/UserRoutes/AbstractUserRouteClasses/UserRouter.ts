@@ -21,8 +21,8 @@ export default abstract class UserRouter{
         let cookies_obj = await Requester.auth("https://www.memrise.com/login/");
         //console.log(cookies_obj);
         this.cookies = '';
-        this.cookies += cookies_obj['1'].name+'='+cookies_obj['1'].value+'; ';
-        this.cookies += cookies_obj['0'].name+'='+cookies_obj['0'].value+'; ';
+        this.cookies += cookies_obj['1'].name+'='+cookies_obj['1'].value+';';
+        this.cookies += cookies_obj['0'].name+'='+cookies_obj['0'].value;
         res.send(this.cookies);
         return this.cookies;
 	}
@@ -53,6 +53,23 @@ export default abstract class UserRouter{
 		}else{
 			res.send("username argument can't be empty");
 		}
+	}
+	public async createCourse(req : Request, res : Response){
+		let obj = {
+			name : req.body.name,
+			//for : req.body.for,
+			//teaching : req.body.teaching,
+			tags : req.body.tags,
+			desc : req.body.desc,
+			short : req.body.short
+		};
+		let resp = await Requester.create(obj, "https://www.memrise.com/course/create/", this.cookies);
+		res.send(resp);
+	}
+	public async updateCourse(req : Request, res : Response){
+		let url = "https://www.memrise.com"+req.body.url;
+		console.log(url);
+		res.send(await Requester.add(req.body.list, url, this.cookies));
 	}
 	public abstract routes():void;
 }

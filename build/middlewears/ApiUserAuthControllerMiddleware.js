@@ -68,26 +68,29 @@ var ApiUserAuthControllerMiddleware = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 9, , 10]);
-                        return [4 /*yield*/, jwtVerifyPromisify(req.query.key, process.env.jwt_api_key_hash)];
+                        console.log('ive received the message');
+                        _a.label = 1;
                     case 1:
+                        _a.trys.push([1, 10, , 11]);
+                        return [4 /*yield*/, jwtVerifyPromisify(req.query.key, process.env.jwt_api_key_hash)];
+                    case 2:
                         jwtVerifyResult = _a.sent();
                         if (jwtVerifyResult === 'exception=)') {
                             throw {};
                         }
                         ;
-                        _a.label = 2;
-                    case 2:
-                        _a.trys.push([2, 7, , 8]);
-                        return [4 /*yield*/, Slave_1.default.mongoosePromisify(ApiMasterList_1.default, 'find', { email_fk: jwtVerifyResult })];
+                        _a.label = 3;
                     case 3:
+                        _a.trys.push([3, 8, , 9]);
+                        return [4 /*yield*/, Slave_1.default.mongoosePromisify(ApiMasterList_1.default, 'find', { email_fk: jwtVerifyResult })];
+                    case 4:
                         inMasters = _a.sent();
-                        if (!inMasters.length) return [3 /*break*/, 4];
+                        if (!inMasters.length) return [3 /*break*/, 5];
                         func = req.url.split('?')[0].slice(1);
                         ApiMasterUserRouter_1.default[func](req, res);
-                        return [3 /*break*/, 6];
-                    case 4: return [4 /*yield*/, Slave_1.default.mongoosePromisify(ApiAdminList_1.default, 'find', { email_fk: jwtVerifyResult })];
-                    case 5:
+                        return [3 /*break*/, 7];
+                    case 5: return [4 /*yield*/, Slave_1.default.mongoosePromisify(ApiAdminList_1.default, 'find', { email_fk: jwtVerifyResult })];
+                    case 6:
                         inAdmins = _a.sent();
                         if (inAdmins.length) {
                             func = req.url.split('?')[0].slice(1);
@@ -98,21 +101,21 @@ var ApiUserAuthControllerMiddleware = /** @class */ (function () {
                             console.log("HOLOP");
                             ApiUserRouter_1.default[func](req, res);
                         }
-                        _a.label = 6;
-                    case 6: return [3 /*break*/, 8];
-                    case 7:
+                        _a.label = 7;
+                    case 7: return [3 /*break*/, 9];
+                    case 8:
                         e_2 = _a.sent();
                         res.send(e_2);
-                        return [3 /*break*/, 8];
-                    case 8: return [3 /*break*/, 10];
-                    case 9:
+                        return [3 /*break*/, 9];
+                    case 9: return [3 /*break*/, 11];
+                    case 10:
                         e_3 = _a.sent();
                         res.status(200).json({
                             success: false,
                             Message: "You can't fool us!"
                         });
-                        return [3 /*break*/, 10];
-                    case 10: return [2 /*return*/];
+                        return [3 /*break*/, 11];
+                    case 11: return [2 /*return*/];
                 }
             });
         });

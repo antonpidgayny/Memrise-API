@@ -16,6 +16,7 @@ class ApiUserAuthControllerMiddleware{
 	}
 
 	public async jwtApiKeyGetSecurity(req : Request, res : Response, next : NextFunction){
+		console.log('ive received the message');
 		async function jwtVerifyPromisify(key, jwt_api_key_hash) {
 			try{
 				return await jwt.verify(key, jwt_api_key_hash);

@@ -85,7 +85,9 @@ var Requester = /** @class */ (function () {
             var resp, cookies;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.requestPostPromisified({ url: url, jar: this.formCoookies(cookies_str, url), headers: this.headers, form: form })];
+                    case 0:
+                        this.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                        return [4 /*yield*/, this.requestPostPromisified({ url: url, jar: this.formCoookies(cookies_str, url), headers: this.headers, form: form })];
                     case 1:
                         resp = _a.sent();
                         cookies = cookieSetHeaderParser.parse(resp, {
@@ -98,35 +100,104 @@ var Requester = /** @class */ (function () {
     };
     Requester.prototype.formCoookies = function (cookies_str, url) {
         var j = request.jar();
-        var cookie = request.cookie(cookies_str);
-        j.setCookie(cookie, url);
+        var cookie = '';
+        //console.log(cookies_str);
+        cookies_str.split(';').forEach(function (elem) {
+            j.setCookie(request.cookie(elem), url);
+        });
+        console.log(j);
+        //console.log(j);
         return j;
+    };
+    Requester.prototype.getCookies = function (str) {
+        var pos = str.search("csrfmiddlewaretoken");
+        return str.slice(pos + 28, pos + 92);
+    };
+    Requester.prototype.getUnusualCookies = function (str) {
+        var pos = str.search("csrftoken");
+        return str.slice(pos + 12, pos + 76);
+    };
+    Requester.prototype.getLevel = function (str) {
+        var pos = str.search("data-level-id");
+        return str.slice(pos + 15, pos + 22);
+    };
+    Requester.prototype.add = function (list, url, cookie_str) {
+        return __awaiter(this, void 0, void 0, function () {
+            var resp, csrfmiddlewaretoken, level, form;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getMemriseRequest(url, cookie_str, undefined)];
+                    case 1:
+                        resp = _a.sent();
+                        csrfmiddlewaretoken = this.getUnusualCookies(resp.body);
+                        level = this.getLevel(resp.body);
+                        url = "https://www.memrise.com/ajax/level/thing/add/";
+                        form = {
+                            "columns": { "1": "llol", "2": "d" },
+                            "level_id": level
+                        };
+                        cookie_str = (cookie_str.split(';')[0] + ';' + "csrftoken=" + csrfmiddlewaretoken);
+                        console.log("chto?", cookie_str);
+                        //return level;
+                        this.headers['x-csrftoken'] = csrfmiddlewaretoken;
+                        return [4 /*yield*/, this.postMemriseRequest(url, cookie_str, form)];
+                    case 2: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    Requester.prototype.create = function (obj, url, cookie_str) {
+        return __awaiter(this, void 0, void 0, function () {
+            var resp, csrfmiddlewaretoken, form;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getMemriseRequest(url, cookie_str, undefined)];
+                    case 1:
+                        resp = _a.sent();
+                        csrfmiddlewaretoken = this.getCookies(resp.body);
+                        form = {
+                            'csrfmiddlewaretoken': csrfmiddlewaretoken,
+                            'name': obj.name,
+                            'target': 6,
+                            'source': 10,
+                            'tags': obj.tags,
+                            'description': obj.desc,
+                            'short_description': obj.short
+                        };
+                        //console.log(cookie_str);
+                        cookie_str = (cookie_str.split(';')[0] + ';' + "csrftoken=" + csrfmiddlewaretoken);
+                        return [4 /*yield*/, this.postMemriseRequest(url, cookie_str, form)];
+                    case 2: 
+                    //return 'success';
+                    return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
     };
     Requester.prototype.auth = function (url) {
         return __awaiter(this, void 0, void 0, function () {
-            var resp, pos, csrfmiddlewaretoken, form, cookie_str, e_1;
+            var resp, csrfmiddlewaretoken, form, cookie_str, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 4, , 5]);
-                        return [4 /*yield*/, this.getMemriseRequest(url, "")];
+                        return [4 /*yield*/, this.getMemriseRequest(url, "", undefined)];
                     case 1:
                         resp = _a.sent();
-                        pos = (resp.body.search("csrfmiddlewaretoken"));
-                        csrfmiddlewaretoken = resp.body.slice(pos + 28, pos + 92);
+                        csrfmiddlewaretoken = this.getCookies(resp.body);
                         form = {
                             'csrfmiddlewaretoken': csrfmiddlewaretoken,
                             'username': process.env.email,
                             'password': process.env.password,
                             'next': ''
                         };
-                        cookie_str = 'csrftoken=' + csrfmiddlewaretoken;
+                        cookie_str = 'csrftoken=' + csrfmiddlewaretoken + ';';
                         url = 'https://www.memrise.com';
                         return [4 /*yield*/, this.postMemriseRequest('https://www.memrise.com/login/', cookie_str, form)];
                     case 2:
                         resp = _a.sent();
                         cookie_str = resp.cookie['1'].name + '=' + resp.cookie['1'].value + '; ';
-                        return [4 /*yield*/, this.getMemriseRequest("https://www.memrise.com/home/", cookie_str)];
+                        return [4 /*yield*/, this.getMemriseRequest("https://www.memrise.com/home/", cookie_str, undefined)];
                     case 3:
                         resp = _a.sent();
                         return [2 /*return*/, resp.cookie];
